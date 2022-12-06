@@ -8,6 +8,18 @@ use GuzzleHttp\Client;
 
 class CountMessages extends Command
 {
+    public function __construct()
+    {
+        $this->slackChannelIds = [
+            'mcSdCrm' => env('SLACK_CHANNEL_ID_MC_SD_CRM'),
+            'errorCrmAdminProduction' => env('SLACK_CHANNEL_ID_ERROR_CRM_ADMIN_PRODUCTION'),
+            'errorCrmExpertProduction' => env('SLACK_CHANNEL_ID_ERROR_CRM_EXPERT_PRODUCTION'),
+            'errorCrmBotProduction' => env('SLACK_CHANNEL_ID_ERROR_CRM_BOT_PRODUCTION'),
+            'errorMoneyCareerProduction' => env('SLACK_CHANNEL_ID_ERROR_MONEY_CAREER_PRODUCTION'),
+        ];
+        parent::__construct();
+    }
+
     /**
      * The name and signature of the console command.
      *
@@ -34,7 +46,7 @@ class CountMessages extends Command
         $client = new Client();
         $endpoint = 'https://slack.com/api/conversations.history';
         $query = http_build_query([
-            'channel' => env('SLACK_CHANNEL_ID_TIMES_NAKAJIMA'),
+            'channel' => $this->slackChannelIds['mcSdCrm'],
             'oldest' => strtotime('last wednesday', $start),
             'latest' => strtotime('this wednesday', $start),
         ]);
@@ -53,8 +65,9 @@ class CountMessages extends Command
             ->map(fn ($message) => [
                 'user' => $message->username ?? $message->user,
                 'text' => $message->text,
-                'ts' => date('Y-m-d H:i:s', substr($message->ts, 0, 10))
-            ])
-            ->each(fn ($message) => \Log::channel('single')->emergency($message['ts'] . ' ' . $message['user'] . ' ' . $message['text']));;
+                'createdAt' => date('Y-m-d H:i:s', substr($message->ts, 0, 10))
+            ]);
+
+        $this->table(['user', 'text', 'createdAt'], $formatMessages);
     }
 }
