@@ -17,3 +17,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::prefix('/count')->group(function () {
+    Route::get('/errors', [App\Http\Controllers\SlackApiController::class, 'errors']);
+    Route::get('/sds', [App\Http\Controllers\SlackApiController::class, 'sds']);
+});
