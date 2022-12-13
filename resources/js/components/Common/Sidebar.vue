@@ -26,16 +26,16 @@ const { isOpenNavigation } = strictInject(globalKey);
 
 const navigationItems = [
     {
-        icon: "mdi-chat-question",
-        title: "SD質問件数",
-        value: "sdCount",
-        path: "/sd/count",
-    },
-    {
         icon: "mdi-chat-alert",
         title: "エラー報告件数",
         value: "errorCount",
         path: "/error/count",
+    },
+    {
+        icon: "mdi-chat-question",
+        title: "SD質問件数",
+        value: "sdCount",
+        path: "/sd/count",
     },
     {
         icon: "mdi-message-text",
