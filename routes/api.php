@@ -18,7 +18,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::prefix('/count')->group(function () {
-    Route::get('/errors', [App\Http\Controllers\SlackApiController::class, 'errors']);
-    Route::get('/sds', [App\Http\Controllers\SlackApiController::class, 'sds']);
+Route::prefix('/sds')->group(function () {
+    Route::get('/count', [App\Http\Controllers\SDsController::class, 'count']);
+    Route::get('/list', [App\Http\Controllers\SDsController::class, 'errors']);
+});
+Route::prefix('/errors')->group(function () {
+    Route::get('/count', [App\Http\Controllers\ErrorsController::class, 'count']);
+    Route::get('/list', [App\Http\Controllers\ErrorsController::class, 'errors']);
 });

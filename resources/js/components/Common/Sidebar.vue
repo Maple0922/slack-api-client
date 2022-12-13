@@ -1,21 +1,50 @@
 <template>
-    <aside class="sidebar">
-        <ul class="sidebar__list">
-            <li class="sidebar__list__item">
-                <router-link class="sidebar__list__item__link" to="/crm"
-                    >mc_sd_crm</router-link
-                >
-            </li>
-            <li class="sidebar__list__item">
-                <router-link class="sidebar__list__item__link" to="/error"
-                    >error</router-link
-                >
-            </li>
-        </ul>
-    </aside>
+    <v-navigation-drawer
+        permanent
+        theme="dark"
+        :rail="!isOpenNavigation"
+        :value="true"
+    >
+        <v-list nav>
+            <v-list-item
+                v-for="item in navigationItems"
+                :key="item.value"
+                :prepend-icon="item.icon"
+                :title="item.title"
+                :value="item.value"
+                :to="item.path"
+            ></v-list-item>
+        </v-list>
+    </v-navigation-drawer>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { globalKey } from "@/provider";
+import { strictInject } from "@/utils/strictInject";
+
+const { isOpenNavigation } = strictInject(globalKey);
+
+const navigationItems = [
+    {
+        icon: "mdi-chat-question",
+        title: "SD質問件数",
+        value: "sdCount",
+        path: "/sd/count",
+    },
+    {
+        icon: "mdi-chat-alert",
+        title: "エラー報告件数",
+        value: "errorCount",
+        path: "/error/count",
+    },
+    {
+        icon: "mdi-message-text",
+        title: "SD質問リスト",
+        value: "sdList",
+        path: "/sd/list",
+    },
+];
+</script>
 
 <style lang="scss" scoped>
 .sidebar {

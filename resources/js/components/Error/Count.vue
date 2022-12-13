@@ -1,6 +1,5 @@
 <template>
     <div class="error-counter">
-        <h2>エラー件数</h2>
         <table class="error-counter__table" border="1">
             <thead>
                 <tr>
@@ -47,7 +46,7 @@ interface Error {
 const errors: Ref<Error[]> = ref([]);
 
 const fetchErrors = async () => {
-    const { data } = await axios.get("/api/count/errors");
+    const { data } = await axios.get("/api/errors/count");
     errors.value = data;
 };
 

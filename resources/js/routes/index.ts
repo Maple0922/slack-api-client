@@ -1,13 +1,30 @@
 const routes = [
     {
-        path: "/crm",
-        name: "crm",
-        component: () => import("@/components/SDCounter/Index.vue"),
+        path: "/sd",
+        name: "sdCount",
+        children: [
+            {
+                path: "count",
+                name: "sdCount",
+                component: () => import("@/components/SD/Count.vue"),
+            },
+            {
+                path: "list",
+                name: "sdList",
+                component: () => import("@/components/SD/List.vue"),
+            },
+        ],
     },
     {
         path: "/error",
         name: "error",
-        component: () => import("@/components/ErrorCounter/Index.vue"),
+        children: [
+            {
+                path: "count",
+                name: "errorCount",
+                component: () => import("@/components/Error/Count.vue"),
+            },
+        ],
     },
 ];
 

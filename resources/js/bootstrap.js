@@ -1,12 +1,3 @@
-import _ from 'lodash';
-window._ = _;
-
-/**
- * We'll load the axios HTTP library which allows us to easily issue requests
- * to our Laravel back-end. This library automatically handles sending the
- * CSRF token as a header based on the value of the "XSRF" token cookie.
-*/
-
 import axios from 'axios';
 window.axios = axios;
 
@@ -20,6 +11,24 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import routes from './routes'
 
+import 'vuetify/styles'
+import { createVuetify } from 'vuetify'
+import * as components from 'vuetify/components'
+import * as directives from 'vuetify/directives'
+import { aliases, mdi } from 'vuetify/iconsets/mdi'
+import "vuetify/dist/vuetify.min.css";
+import '@mdi/font/css/materialdesignicons.css'
+
+const vuetify = createVuetify({
+    components,
+    directives,
+    icons: {
+        defaultSet: 'mdi',
+        aliases,
+        sets: { mdi }
+    }
+})
+
 const router = createRouter({
     history: createWebHistory(),
     routes
@@ -27,9 +36,8 @@ const router = createRouter({
 
 const app = createApp(App);
 
-console.log(app.version);
-
 app.use(router);
+app.use(vuetify);
 app.mount("#app");
 
 /**

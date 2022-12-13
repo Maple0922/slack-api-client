@@ -1,28 +1,21 @@
 <template>
-    <header class="header">
-        <h1 class="header__title">Slack API Client</h1>
-    </header>
+    <v-app-bar theme="dark">
+        <template #prepend>
+            <v-app-bar-nav-icon @click="toggleNavigation"></v-app-bar-nav-icon>
+        </template>
+        <v-app-bar-title class="text-h5 font-weight-bold">
+            Slack API Client
+        </v-app-bar-title>
+    </v-app-bar>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { globalKey } from "@/provider";
+import { strictInject } from "@/utils/strictInject";
 
-<style lang="scss" scoped>
-.header {
-    background-color: #000916;
-    color: white;
-    border-bottom: 1px solid #e5e5e5;
-    width: 100%;
-    height: 60px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1000;
+const { isOpenNavigation } = strictInject(globalKey);
 
-    &__title {
-        font-size: 1.5rem;
-        font-weight: 700;
-        line-height: 60px;
-        margin: 0 0 0 20px;
-    }
-}
-</style>
+const toggleNavigation = () => {
+    isOpenNavigation.value = !isOpenNavigation.value;
+};
+</script>
