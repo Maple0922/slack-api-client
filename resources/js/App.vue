@@ -3,7 +3,7 @@
         <Header />
         <Sidebar />
         <v-main>
-            <v-container class="pa-4" style="max-width: none">
+            <v-container class="pa-4">
                 <router-view />
             </v-container>
         </v-main>

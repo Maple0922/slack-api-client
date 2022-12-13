@@ -35,36 +35,39 @@ class ErrorsController extends Controller
 
         $weeks = collect(range(0, 4));
 
-        return $weeks->map(function ($week) use ($channels, $client, $endpoint, $headers) {
-            $beforeWeeks = Carbon::now()->subWeeks($week);
+        return $weeks
+            ->sortDesc()
+            ->map(function ($week) use ($channels, $client, $endpoint, $headers) {
+                $beforeWeeks = Carbon::now()->subWeeks($week);
 
-            $errors = $channels
-                ->flatMap(function ($channel) use ($client, $endpoint, $headers, $beforeWeeks) {
-                    $query = http_build_query([
-                        'channel' => $this->slackChannelIds[$channel],
-                        'oldest' => strtotime('last wednesday', $beforeWeeks->format('U')),
-                        'latest' => strtotime('this wednesday', $beforeWeeks->format('U')),
-                    ]);
-                    $requestUrl = "{$endpoint}?{$query}";
-                    $response = $client->get($requestUrl, ['headers' => $headers]);
-                    $body = $response->getBody();
-                    $messages = collect(json_decode($body)->messages);
-                    $formatMessages = $messages
-                        ->sortBy('ts')
-                        ->filter(fn ($message) => $message->username ?? $message->user === 'Laravel')
-                        ->map(fn ($message) => date('Y-m-d', substr($message->ts, 0, 10)));
+                $errors = $channels
+                    ->flatMap(function ($channel) use ($client, $endpoint, $headers, $beforeWeeks) {
+                        $query = http_build_query([
+                            'channel' => $this->slackChannelIds[$channel],
+                            'oldest' => strtotime('last wednesday', $beforeWeeks->format('U')),
+                            'latest' => strtotime('this wednesday', $beforeWeeks->format('U')),
+                        ]);
+                        $requestUrl = "{$endpoint}?{$query}";
+                        $response = $client->get($requestUrl, ['headers' => $headers]);
+                        $body = $response->getBody();
+                        $messages = collect(json_decode($body)->messages);
+                        $formatMessages = $messages
+                            ->sortBy('ts')
+                            ->filter(fn ($message) => $message->username ?? $message->user === 'Laravel')
+                            ->map(fn ($message) => date('Y-m-d', substr($message->ts, 0, 10)));
 
-                    return [
-                        Str::camel($channel) => $formatMessages->count()
-                    ];
-                });
+                        return [
+                            Str::camel($channel) => $formatMessages->count()
+                        ];
+                    });
 
 
-            return [
-                'week' => "{$beforeWeeks->format('Y-m-d')} - {$beforeWeeks->subDay(6)->format('Y-m-d')}",
-                ...$errors->toArray(),
-                'total' => $errors->sum()
-            ];
-        });
+                return [
+                    'week' => "{$beforeWeeks->subDay(6)->format('Y-m-d')} - {$beforeWeeks->addDay(6)->format('Y-m-d')}",
+                    ...$errors->toArray(),
+                    'total' => $errors->sum()
+                ];
+            })
+            ->values();
     }
 }

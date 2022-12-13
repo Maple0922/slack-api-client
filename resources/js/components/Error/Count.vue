@@ -43,10 +43,10 @@ const fetchErrorCount = async () => {
 
 const headers: Header[] = [
     { text: "週", value: "week" },
-    { text: "crm-admin", value: "crmAdmin" },
-    { text: "crm-expert", value: "crmExpert" },
-    { text: "crm-bot", value: "crmBot" },
-    { text: "money-career", value: "moneyCareer" },
+    { text: "SD Console", value: "crmAdmin" },
+    { text: "専門家CRM", value: "crmExpert" },
+    { text: "LINE Bot", value: "crmBot" },
+    { text: "マネーキャリア", value: "moneyCareer" },
     { text: "合計", value: "total" },
 ];
 
