@@ -43,7 +43,7 @@ class SDsController extends Controller
                 $count = collect(json_decode($body)->messages)->count();
 
                 return [
-                    'week' => "{$beforeWeeks->format('Y-m-d')} - {$beforeWeeks->subDay(6)->format('Y-m-d')}",
+                    'week' => "{$beforeWeeks->subDay(6)->format('Y-m-d')} - {$beforeWeeks->addDay(6)->format('Y-m-d')}",
                     'count' => $count
                 ];
             })
