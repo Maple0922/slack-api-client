@@ -14,10 +14,18 @@
 import Sidebar from "./components/Common/Sidebar.vue";
 import Header from "./components/Common/Header.vue";
 import { useGlobalProvider, globalKey } from "@/provider";
-import { provide } from "vue";
+import { provide, onMounted } from "vue";
 
 const provider = useGlobalProvider();
 provide(globalKey, provider);
+
+const { fetchErrorCount, fetchSDCount, fetchSDList } = provider;
+
+onMounted(() => {
+    fetchErrorCount();
+    fetchSDCount();
+    fetchSDList();
+});
 </script>
 
 <style lang="scss" scoped>

@@ -1,9 +1,10 @@
 <template>
     <EasyDataTable
         :headers="headers"
-        :items="errors"
-        :loading="isLoading"
+        :items="errorCounts"
+        :loading="isErrorCountLoading"
         hide-footer
+        border-cell
     >
         <template #loading>
             <div class="text-center">
@@ -18,28 +19,12 @@
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
-import { ref, Ref, onMounted } from "vue";
+import type { Header } from "vue3-easy-data-table";
 
-import type { Header, Item } from "vue3-easy-data-table";
-interface Error extends Item {
-    week: string;
-    crmAdmin: number;
-    crmExpert: number;
-    crmBot: number;
-    moneyCareer: number;
-}
+import { strictInject } from "@/utils/strictInject";
+import { globalKey } from "@/provider";
 
-const errors: Ref<Error[]> = ref([]);
-
-const isLoading = ref(false);
-
-const fetchErrorCount = async () => {
-    isLoading.value = true;
-    const { data } = await axios.get<Error[]>("/api/errors/count");
-    errors.value = data;
-    isLoading.value = false;
-};
+const { isErrorCountLoading, errorCounts } = strictInject(globalKey);
 
 const headers: Header[] = [
     { text: "週", value: "week" },
@@ -49,8 +34,4 @@ const headers: Header[] = [
     { text: "マネーキャリア", value: "moneyCareer" },
     { text: "合計", value: "total" },
 ];
-
-onMounted(async () => {
-    fetchErrorCount();
-});
 </script>

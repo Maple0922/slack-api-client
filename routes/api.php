@@ -20,9 +20,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::prefix('/sds')->group(function () {
     Route::get('/count', [App\Http\Controllers\SDsController::class, 'count']);
-    Route::get('/list', [App\Http\Controllers\SDsController::class, 'errors']);
+    Route::get('/list', [App\Http\Controllers\SDsController::class, 'list']);
 });
 Route::prefix('/errors')->group(function () {
     Route::get('/count', [App\Http\Controllers\ErrorsController::class, 'count']);
-    Route::get('/list', [App\Http\Controllers\ErrorsController::class, 'errors']);
+    Route::get('/list', [App\Http\Controllers\ErrorsController::class, 'list']);
 });

@@ -1,9 +1,10 @@
 <template>
     <EasyDataTable
         :headers="headers"
-        :items="sds"
-        :loading="isLoading"
+        :items="sdCounts"
+        :loading="isSDCountLoading"
         hide-footer
+        border-cell
     >
         <template #loading>
             <div class="text-center">
@@ -18,32 +19,15 @@
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
-import { ref, Ref, onMounted } from "vue";
+import type { Header } from "vue3-easy-data-table";
 
-import type { Header, Item } from "vue3-easy-data-table";
-interface SD extends Item {
-    week: string;
-    count: number;
-}
+import { strictInject } from "@/utils/strictInject";
+import { globalKey } from "@/provider";
 
-const sds: Ref<SD[]> = ref([]);
-
-const isLoading = ref(false);
-
-const fetchSDCount = async () => {
-    isLoading.value = true;
-    const { data } = await axios.get<SD[]>("/api/sds/count");
-    sds.value = data;
-    isLoading.value = false;
-};
+const { isSDCountLoading, sdCounts } = strictInject(globalKey);
 
 const headers: Header[] = [
     { text: "週", value: "week" },
     { text: "件数", value: "count" },
 ];
-
-onMounted(async () => {
-    fetchSDCount();
-});
 </script>

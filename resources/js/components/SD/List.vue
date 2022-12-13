@@ -1,114 +1,41 @@
 <template>
-    <div class="sd-counter">
-        <h2>SD質問件数</h2>
-        <v-table>
-            <thead>
-                <tr>
-                    <th>週</th>
-                    <th>件数</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(sd, key) in sds" :key="key">
-                    <td>{{ sd.week }}</td>
-                    <td>{{ sd.count }}</td>
-                </tr>
-            </tbody>
-        </v-table>
-        <v-table height="300px">
-            <thead>
-                <tr>
-                    <th class="text-left">Name</th>
-                    <th class="text-left">Calories</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="item in desserts" :key="item.name">
-                    <td>{{ item.name }}</td>
-                    <td>{{ item.calories }}</td>
-                </tr>
-            </tbody>
-        </v-table>
-    </div>
+    <EasyDataTable
+        :headers="headers"
+        :items="sdList"
+        :loading="isSDListLoading"
+        :rows-per-page="100"
+    >
+        <template #loading>
+            <div class="text-center">
+                <img
+                    src="../../../assets/party-parrot.gif"
+                    style="width: 50px"
+                />
+                <p class="text-caption">Loading...</p>
+            </div>
+        </template>
+        <template #item-user="{ user }">
+            <div v-html="user" class="pa-2"></div>
+        </template>
+        <template #item-content="{ content }">
+            <div v-html="content" class="pa-2"></div>
+        </template>
+    </EasyDataTable>
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
-import { ref, Ref, onMounted } from "vue";
+import type { Header } from "vue3-easy-data-table";
 
-interface SD {
-    count: number;
-    week: string;
-}
+import { strictInject } from "@/utils/strictInject";
 
-const desserts = [
-    {
-        name: "Frozen Yogurt",
-        calories: 159,
-    },
-    {
-        name: "Ice cream sandwich",
-        calories: 237,
-    },
-    {
-        name: "Eclair",
-        calories: 262,
-    },
-    {
-        name: "Cupcake",
-        calories: 305,
-    },
-    {
-        name: "Gingerbread",
-        calories: 356,
-    },
-    {
-        name: "Jelly bean",
-        calories: 375,
-    },
-    {
-        name: "Lollipop",
-        calories: 392,
-    },
-    {
-        name: "Honeycomb",
-        calories: 408,
-    },
-    {
-        name: "Donut",
-        calories: 452,
-    },
-    {
-        name: "KitKat",
-        calories: 518,
-    },
+import { globalKey } from "@/provider";
+
+const { isSDListLoading, sdList } = strictInject(globalKey);
+
+const headers: Header[] = [
+    { text: "日付", value: "date", width: 100 },
+    { text: "時間", value: "time", width: 80 },
+    { text: "送信者", value: "user", width: 180 },
+    { text: "内容", value: "content" },
 ];
-
-const sds: Ref<SD[]> = ref([]);
-
-const fetchSDs = async () => {
-    const { data } = await axios.get("/api/count/sds");
-    sds.value = data;
-};
-
-onMounted(async () => {
-    fetchSDs();
-});
 </script>
-
-<style lang="scss" scoped>
-.sd-counter {
-    // &__table {
-    //     width: 100%;
-    //     border-collapse: collapse;
-    //     th {
-    //         padding: 10px;
-    //         text-align: center;
-    //     }
-    //     td {
-    //         padding: 10px;
-    //         text-align: center;
-    //     }
-    // }
-}
-</style>
