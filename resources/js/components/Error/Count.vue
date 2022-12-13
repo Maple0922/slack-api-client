@@ -1,73 +1,56 @@
 <template>
-    <div class="error-counter">
-        <table class="error-counter__table" border="1">
-            <thead>
-                <tr>
-                    <th></th>
-                    <th>crm-admin</th>
-                    <th>crm-expert</th>
-                    <th>crm-bot</th>
-                    <th>money-career</th>
-                    <th>合計</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(error, key) in errors" :key="key">
-                    <td>{{ error.week }}</td>
-                    <td>{{ error.errors["0"].count }}</td>
-                    <td>{{ error.errors["1"].count }}</td>
-                    <td>{{ error.errors["2"].count }}</td>
-                    <td>{{ error.errors["3"].count }}</td>
-                    <td>
-                        {{
-                            error.errors
-                                .map((e) => e.count)
-                                .reduce((a, b) => a + b)
-                        }}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+    <EasyDataTable
+        :headers="headers"
+        :items="errors"
+        :loading="isLoading"
+        hide-footer
+    >
+        <template #loading>
+            <div class="text-center">
+                <img
+                    src="../../../assets/party-parrot.gif"
+                    style="width: 50px"
+                />
+                <p class="text-caption">Loading...</p>
+            </div>
+        </template>
+    </EasyDataTable>
 </template>
 
 <script setup lang="ts">
 import axios from "axios";
 import { ref, Ref, onMounted } from "vue";
 
-interface Error {
-    errors: {
-        channel: string;
-        count: number;
-    }[];
+import type { Header, Item } from "vue3-easy-data-table";
+interface Error extends Item {
     week: string;
+    crmAdmin: number;
+    crmExpert: number;
+    crmBot: number;
+    moneyCareer: number;
 }
 
 const errors: Ref<Error[]> = ref([]);
 
-const fetchErrors = async () => {
-    const { data } = await axios.get("/api/errors/count");
+const isLoading = ref(false);
+
+const fetchErrorCount = async () => {
+    isLoading.value = true;
+    const { data } = await axios.get<Error[]>("/api/errors/count");
     errors.value = data;
+    isLoading.value = false;
 };
 
+const headers: Header[] = [
+    { text: "週", value: "week" },
+    { text: "crm-admin", value: "crmAdmin" },
+    { text: "crm-expert", value: "crmExpert" },
+    { text: "crm-bot", value: "crmBot" },
+    { text: "money-career", value: "moneyCareer" },
+    { text: "合計", value: "total" },
+];
+
 onMounted(async () => {
-    fetchErrors();
+    fetchErrorCount();
 });
 </script>
-
-<style lang="scss" scoped>
-.error-counter {
-    &__table {
-        width: 100%;
-        border-collapse: collapse;
-        th {
-            padding: 10px;
-            text-align: center;
-        }
-        td {
-            padding: 10px;
-            text-align: center;
-        }
-    }
-}
-</style>

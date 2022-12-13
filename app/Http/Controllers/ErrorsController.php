@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use GuzzleHttp\Client;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 class ErrorsController extends Controller
 {
@@ -17,7 +18,7 @@ class ErrorsController extends Controller
         ];
     }
 
-    public function errors()
+    public function count()
     {
         $client = new Client();
         $endpoint = 'https://slack.com/api/conversations.history';
@@ -38,7 +39,7 @@ class ErrorsController extends Controller
             $beforeWeeks = Carbon::now()->subWeeks($week);
 
             $errors = $channels
-                ->map(function ($channel) use ($client, $endpoint, $headers, $beforeWeeks) {
+                ->flatMap(function ($channel) use ($client, $endpoint, $headers, $beforeWeeks) {
                     $query = http_build_query([
                         'channel' => $this->slackChannelIds[$channel],
                         'oldest' => strtotime('last wednesday', $beforeWeeks->format('U')),
@@ -54,15 +55,15 @@ class ErrorsController extends Controller
                         ->map(fn ($message) => date('Y-m-d', substr($message->ts, 0, 10)));
 
                     return [
-                        'channel' => $channel,
-                        'count' => $formatMessages->count()
+                        Str::camel($channel) => $formatMessages->count()
                     ];
                 });
 
 
             return [
                 'week' => "{$beforeWeeks->format('Y-m-d')} - {$beforeWeeks->subDay(6)->format('Y-m-d')}",
-                'errors' => $errors
+                ...$errors->toArray(),
+                'total' => $errors->sum()
             ];
         });
     }

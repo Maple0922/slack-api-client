@@ -19,6 +19,10 @@ import { aliases, mdi } from 'vuetify/iconsets/mdi'
 import "vuetify/dist/vuetify.min.css";
 import '@mdi/font/css/materialdesignicons.css'
 
+import Vue3EasyDataTable from 'vue3-easy-data-table';
+import 'vue3-easy-data-table/dist/style.css';
+
+
 const vuetify = createVuetify({
     components,
     directives,
@@ -35,6 +39,7 @@ const router = createRouter({
 })
 
 const app = createApp(App);
+app.component('EasyDataTable', Vue3EasyDataTable);
 
 app.use(router);
 app.use(vuetify);
