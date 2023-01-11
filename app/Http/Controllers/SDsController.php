@@ -84,7 +84,9 @@ class SDsController extends Controller
             "<@U40LXDRJT>" => "@kengo kitaku",
             "<@U021PFA41EZ>" => "@futo nakajima",
             "<@U01GYMNQ4E4>" => "@itsuki tabata",
-            "<!subteam^S033HEA941W|@engineer_executive>" => "@engineer_executive"
+            "<@U037FRKMATV>" => "@nana imura",
+            "<@U04445TS1QQ>" => "@chiho suzuki",
+            "<!subteam^S033HEA941W|@engineer_executive>" => "@engineer_executive",
         ];
 
         $replaceSendUsername = [
@@ -101,6 +103,8 @@ class SDsController extends Controller
             "U40LXDRJT" => "@kengo kitaku",
             "U021PFA41EZ" => "@futo nakajima",
             "U01GYMNQ4E4" => "@itsuki tabata",
+            "U037FRKMATV" => "@nana imura",
+            "U04445TS1QQ" => "@chiho suzuki"
         ];
 
         $replaceHTML = [
@@ -119,6 +123,8 @@ class SDsController extends Controller
             "@ritsuko himoto" => "<span class='px-1 font-weight-bold d-inline-block rounded' style='color: blue; background-color: skyblue'>@ritsuko himoto</span>",
             "@yuuka yamashita" => "<span class='px-1 font-weight-bold d-inline-block rounded' style='color: blue; background-color: skyblue'>@yuuka yamashita</span>",
             "@eri onoda" => "<span class='px-1 font-weight-bold d-inline-block rounded' style='color: blue; background-color: skyblue'>@eri onoda</span>",
+            "@nana imura" => "<span class='px-1 font-weight-bold d-inline-block rounded' style='color: blue; background-color: skyblue'>@nana imura</span>",
+            "@chiho suzuki" => "<span class='px-1 font-weight-bold d-inline-block rounded' style='color: blue; background-color: skyblue'>@chiho suzuki</span>",
         ];
 
         return $messages->map(function ($message) use ($replaceMentionUsername, $replaceSendUsername, $replaceHTML) {
