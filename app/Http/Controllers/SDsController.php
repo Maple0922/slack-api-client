@@ -40,7 +40,9 @@ class SDsController extends Controller
                 $requestUrl = "{$endpoint}?{$query}";
                 $response = $client->get($requestUrl, ['headers' => $headers]);
                 $body = $response->getBody();
-                $count = collect(json_decode($body)->messages)->count();
+                $count = collect(json_decode($body)->messages)
+                    ->filter(fn ($message) => isset($message->user))
+                    ->count();
 
                 return [
                     'week' => "{$beforeWeeks->subDay(6)->format('Y-m-d')} - {$beforeWeeks->addDay(6)->format('Y-m-d')}",
@@ -127,15 +129,15 @@ class SDsController extends Controller
             "@chiho suzuki" => "<span class='px-1 font-weight-bold d-inline-block rounded' style='color: blue; background-color: skyblue'>@chiho suzuki</span>",
         ];
 
-        return $messages->map(function ($message) use ($replaceMentionUsername, $replaceSendUsername, $replaceHTML) {
-            return [
+        return $messages
+            ->filter(fn ($message) => isset($message->user))
+            ->map(fn ($message) => [
                 'user' => strtr(strtr($message->user, $replaceSendUsername), $replaceHTML),
                 'content' => strtr(strtr($message->text, $replaceMentionUsername), $replaceHTML),
                 'datetime' => Carbon::parse($message->ts)->timezone("Asia/Tokyo")->format('Y-m-d H:i:s'),
                 'date' => Carbon::parse($message->ts)->timezone("Asia/Tokyo")->format('Y-m-d'),
                 'time' => Carbon::parse($message->ts)->timezone("Asia/Tokyo")->format('H:i:s'),
-            ];
-        })
+            ])
             ->sortBy('datetime')
             ->values();
     }
