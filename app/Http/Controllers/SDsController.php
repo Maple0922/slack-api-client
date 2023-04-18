@@ -34,7 +34,7 @@ class SDsController extends Controller
                 $beforeWeeks = Carbon::now()->subWeeks($week);
                 $query = http_build_query([
                     'channel' => $this->slackChannelIds[$channel],
-                    'oldest' => strtotime('last wednesday', $beforeWeeks->format('U')),
+                    'oldest' => strtotime('last thursday', $beforeWeeks->format('U')),
                     'latest' => strtotime('this wednesday', $beforeWeeks->format('U')),
                 ]);
                 $requestUrl = "{$endpoint}?{$query}";
@@ -64,7 +64,7 @@ class SDsController extends Controller
 
         $query = http_build_query([
             'channel' => $this->slackChannelIds[$channel],
-            'oldest' => strtotime('last wednesday', Carbon::today()->format('U')),
+            'oldest' => strtotime('last thursday', Carbon::today()->format('U')),
             'latest' => strtotime('this wednesday', Carbon::today()->format('U')),
         ]);
         $requestUrl = "{$endpoint}?{$query}";

@@ -46,7 +46,7 @@ class ErrorsController extends Controller
                     ->flatMap(function ($channel) use ($client, $endpoint, $headers, $beforeWeeks) {
                         $query = http_build_query([
                             'channel' => $this->slackChannelIds[$channel],
-                            'oldest' => strtotime('last wednesday', $beforeWeeks->format('U')),
+                            'oldest' => strtotime('last thursday', $beforeWeeks->format('U')),
                             'latest' => strtotime('this wednesday', $beforeWeeks->format('U')),
                         ]);
                         $requestUrl = "{$endpoint}?{$query}";
