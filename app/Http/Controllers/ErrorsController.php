@@ -56,7 +56,7 @@ class ErrorsController extends Controller
                         $messages = collect(json_decode($body)->messages);
                         $formatMessages = $messages
                             ->sortBy('ts')
-                            ->filter(fn ($message) => $message->username ?? $message->user === 'Laravel')
+                            ->filter(fn ($message) => $message->username ?? optional($message)->user === 'Laravel')
                             ->map(fn ($message) => date('Y-m-d', substr($message->ts, 0, 10)));
 
                         return [
