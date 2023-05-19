@@ -15,6 +15,7 @@ class ErrorsController extends Controller
             'crm-expert' => env('SLACK_CHANNEL_ID_ERROR_CRM_EXPERT_PRODUCTION'),
             'crm-bot' => env('SLACK_CHANNEL_ID_ERROR_CRM_BOT_PRODUCTION'),
             'crm-market-holder_egs' => env('SLACK_CHANNEL_ID_ERROR_CRM_MARKET_HOLDER_PRODUCTION_EGS'),
+            'crm-market-holder_senlife' => env('SLACK_CHANNEL_ID_ERROR_CRM_MARKET_HOLDER_PRODUCTION_SENLIFE'),
             'money-career' => env('SLACK_CHANNEL_ID_ERROR_MONEY_CAREER_PRODUCTION')
         ];
     }
@@ -32,6 +33,7 @@ class ErrorsController extends Controller
             'crm-expert',
             'crm-bot',
             'crm-market-holder_egs',
+            'crm-market-holder_senlife',
             'money-career'
         ]);
 
@@ -52,7 +54,6 @@ class ErrorsController extends Controller
                         $requestUrl = "{$endpoint}?{$query}";
                         $response = $client->get($requestUrl, ['headers' => $headers]);
                         $body = $response->getBody();
-                        \Log::channel('single')->emergency($body);
                         $messages = collect(json_decode($body)->messages);
                         $formatMessages = $messages
                             ->sortBy('ts')
