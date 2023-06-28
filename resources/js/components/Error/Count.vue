@@ -29,7 +29,8 @@ const { isErrorCountLoading, errorCounts } = strictInject(globalKey);
 const headers: Header[] = [
     { text: "週", value: "week" },
     { text: "SD Console", value: "crmAdmin" },
-    { text: "専門家CRM", value: "crmExpert" },
+    { text: "ExpertCloud v1", value: "crmExpertV1" },
+    { text: "ExpertCloud v2", value: "crmExpertV2" },
     { text: "LINE Bot", value: "crmBot" },
     { text: "マネーキャリア", value: "moneyCareer" },
     { text: "マーケットクラウド for EGS", value: "crmMarketHolderEgs" },

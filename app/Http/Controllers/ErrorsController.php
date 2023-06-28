@@ -12,7 +12,8 @@ class ErrorsController extends Controller
     {
         $this->slackChannelIds = [
             'crm-admin' => env('SLACK_CHANNEL_ID_ERROR_CRM_ADMIN_PRODUCTION'),
-            'crm-expert' => env('SLACK_CHANNEL_ID_ERROR_CRM_EXPERT_PRODUCTION'),
+            'crm-expert_v1' => env('SLACK_CHANNEL_ID_ERROR_CRM_EXPERT_V1_PRODUCTION'),
+            'crm-expert_v2' => env('SLACK_CHANNEL_ID_ERROR_CRM_EXPERT_V2_PRODUCTION'),
             'crm-bot' => env('SLACK_CHANNEL_ID_ERROR_CRM_BOT_PRODUCTION'),
             'crm-market-holder_egs' => env('SLACK_CHANNEL_ID_ERROR_CRM_MARKET_HOLDER_PRODUCTION_EGS'),
             'crm-market-holder_senlife' => env('SLACK_CHANNEL_ID_ERROR_CRM_MARKET_HOLDER_PRODUCTION_SENLIFE'),
@@ -30,7 +31,8 @@ class ErrorsController extends Controller
 
         $channels = collect([
             'crm-admin',
-            'crm-expert',
+            'crm-expert_v1',
+            'crm-expert_v2',
             'crm-bot',
             'crm-market-holder_egs',
             'crm-market-holder_senlife',
