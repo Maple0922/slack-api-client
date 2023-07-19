@@ -34,7 +34,10 @@ const headers: Header[] = [
     { text: "LINE Bot", value: "crmBot" },
     { text: "マネーキャリア", value: "moneyCareer" },
     { text: "マーケットクラウド for EGS", value: "crmMarketHolderEgs" },
-    { text: "マーケットクラウド for SENライフ", value: "crmMarketHolderSenlife" },
+    {
+        text: "マーケットクラウド for SENライフ",
+        value: "crmMarketHolderSenlife",
+    },
     { text: "合計", value: "total" },
 ];
 </script>

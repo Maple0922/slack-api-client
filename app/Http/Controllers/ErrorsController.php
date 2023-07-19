@@ -96,27 +96,36 @@ class ErrorsController extends Controller
         ];
 
         return collect($channels)
-            ->map(function (string $channel) use ($client, $endpoint, $headers) {
+            ->flatMap(function (string $channel) use ($client, $endpoint, $headers) {
                 $query = http_build_query([
                     'channel' => $this->slackChannelIds[$channel],
                     'oldest' => strtotime('last thursday', Carbon::today()->format('U')),
                     'latest' => strtotime('this wednesday', Carbon::today()->format('U')),
                 ]);
+
                 $requestUrl = "{$endpoint}?{$query}";
                 $response = $client->get($requestUrl, ['headers' => $headers]);
                 $body = $response->getBody();
-                \Log::channel('single')->emergency($body);
                 $messages = collect(json_decode($body)->messages);
 
                 return $messages
+                    ->filter(fn ($message) => isset($message->attachments))
                     ->map(fn ($message) => [
-                        'content' => $message->text,
-                        'datetime' => Carbon::parse($message->ts)->timezone("Asia/Tokyo")->format('Y-m-d H:i:s'),
-                        'date' => Carbon::parse($message->ts)->timezone("Asia/Tokyo")->format('Y-m-d'),
-                        'time' => Carbon::parse($message->ts)->timezone("Asia/Tokyo")->format('H:i:s'),
+                        'channel' => $channel,
+                        'content' => $message->attachments[0]->text,
+                        'datetime' => date('Y-m-d', substr($message->ts, 0, 10)),
                     ])
-                    ->sortBy('datetime')
+                    ->groupBy('content')
+                    ->map(fn ($message) => [
+                        'channel' => $message->first()['channel'],
+                        'content' => $message->first()['content'],
+                        'count' => $message->count(),
+                        'datetime' => $message->last()['datetime'],
+                    ])
                     ->values();
-            });
+            })
+            ->sortBy('channel')
+            ->sortByDesc('count')
+            ->values();
     }
 }
