@@ -76,4 +76,47 @@ class ErrorsController extends Controller
             })
             ->values();
     }
+
+    public function list()
+    {
+        $client = new Client();
+        $endpoint = 'https://slack.com/api/conversations.history';
+        $headers = [
+            "Authorization" => "Bearer " . env('SLACK_TOKEN')
+        ];
+
+        $channels = [
+            "crm-admin",
+            "crm-expert_v1",
+            "crm-expert_v2",
+            "crm-bot",
+            "crm-market-holder_egs",
+            "crm-market-holder_senlife",
+            "money-career"
+        ];
+
+        return collect($channels)
+            ->map(function (string $channel) use ($client, $endpoint, $headers) {
+                $query = http_build_query([
+                    'channel' => $this->slackChannelIds[$channel],
+                    'oldest' => strtotime('last thursday', Carbon::today()->format('U')),
+                    'latest' => strtotime('this wednesday', Carbon::today()->format('U')),
+                ]);
+                $requestUrl = "{$endpoint}?{$query}";
+                $response = $client->get($requestUrl, ['headers' => $headers]);
+                $body = $response->getBody();
+                \Log::channel('single')->emergency($body);
+                $messages = collect(json_decode($body)->messages);
+
+                return $messages
+                    ->map(fn ($message) => [
+                        'content' => $message->text,
+                        'datetime' => Carbon::parse($message->ts)->timezone("Asia/Tokyo")->format('Y-m-d H:i:s'),
+                        'date' => Carbon::parse($message->ts)->timezone("Asia/Tokyo")->format('Y-m-d'),
+                        'time' => Carbon::parse($message->ts)->timezone("Asia/Tokyo")->format('H:i:s'),
+                    ])
+                    ->sortBy('datetime')
+                    ->values();
+            });
+    }
 }

@@ -24,6 +24,11 @@ const routes = [
                 name: "errorCount",
                 component: () => import("@/components/Error/Count.vue"),
             },
+            {
+                path: "list",
+                name: "errorList",
+                component: () => import("@/components/Error/List.vue"),
+            },
         ],
     },
 ];

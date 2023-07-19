@@ -32,6 +32,12 @@ const navigationItems = [
         path: "/error/count",
     },
     {
+        icon: "mdi-chat-alert",
+        title: "エラーリスト",
+        value: "errorList",
+        path: "/error/list",
+    },
+    {
         icon: "mdi-chat-question",
         title: "SD質問件数",
         value: "sdCount",
@@ -56,7 +62,6 @@ const navigationItems = [
     bottom: 0;
     position: fixed;
     width: 200px;
-
     &__list {
         list-style: none;
         width: 100%;
@@ -74,7 +79,6 @@ const navigationItems = [
             &:hover {
                 background-color: #e5e5e5;
             }
-
             &__link {
                 padding: 0 20px;
                 color: #000;

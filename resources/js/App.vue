@@ -19,10 +19,11 @@ import { provide, onMounted } from "vue";
 const provider = useGlobalProvider();
 provide(globalKey, provider);
 
-const { fetchErrorCount, fetchSDCount, fetchSDList } = provider;
+const { fetchErrorCount, fetchErrorList, fetchSDCount, fetchSDList } = provider;
 
 onMounted(() => {
     fetchErrorCount();
+    fetchErrorList();
     fetchSDCount();
     fetchSDList();
 });

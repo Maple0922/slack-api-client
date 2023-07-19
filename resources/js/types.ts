@@ -8,6 +8,11 @@ export interface ErrorCount extends Item {
     moneyCareer: number;
 }
 
+export interface ErrorList extends Item {
+    datetime: string;
+    content: string;
+}
+
 export interface SDCount extends Item {
     week: string;
     count: number;
