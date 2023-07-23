@@ -31,11 +31,14 @@ class SDsController extends Controller
         return $weeks
             ->sortDesc()
             ->map(function ($week) use ($channel, $client, $endpoint, $headers) {
-                $beforeWeeks = Carbon::now()->subWeeks($week);
+                $beforeWeeks = Carbon::today()->subWeeks($week);
+                $startTime = $beforeWeeks->copy()->subDay(6);
+                $endTime = $beforeWeeks->copy()->addDay(1)->subSecond();
+
                 $query = http_build_query([
                     'channel' => $this->slackChannelIds[$channel],
-                    'oldest' => strtotime('last thursday', $beforeWeeks->format('U')),
-                    'latest' => strtotime('this wednesday', $beforeWeeks->format('U')),
+                    'oldest' => $startTime->format('U'),
+                    'latest' => $endTime->format('U'),
                 ]);
                 $requestUrl = "{$endpoint}?{$query}";
                 $response = $client->get($requestUrl, ['headers' => $headers]);
@@ -45,7 +48,8 @@ class SDsController extends Controller
                     ->count();
 
                 return [
-                    'week' => "{$beforeWeeks->subDay(6)->format('Y-m-d')} - {$beforeWeeks->addDay(6)->format('Y-m-d')}",
+                    'start' => $startTime->isoFormat('YYYY-MM-DD (ddd) HH:mm'),
+                    'end' => $endTime->isoFormat('YYYY-MM-DD (ddd) HH:mm'),
                     'count' => $count
                 ];
             })
@@ -59,13 +63,15 @@ class SDsController extends Controller
         $headers = [
             "Authorization" => "Bearer " . env('SLACK_TOKEN')
         ];
-
         $channel = "mc-sd-crm";
+
+        $startTime = Carbon::today()->subDay(6);
+        $endTime = Carbon::today()->addDay(1)->subSecond();
 
         $query = http_build_query([
             'channel' => $this->slackChannelIds[$channel],
-            'oldest' => strtotime('last thursday', Carbon::today()->format('U')),
-            'latest' => strtotime('this wednesday', Carbon::today()->format('U')),
+            'oldest' => $startTime->format('U'),
+            'latest' => $endTime->format('U'),
         ]);
         $requestUrl = "{$endpoint}?{$query}";
         $response = $client->get($requestUrl, ['headers' => $headers]);

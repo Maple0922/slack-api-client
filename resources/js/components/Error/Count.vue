@@ -27,7 +27,8 @@ import { globalKey } from "@/provider";
 const { isErrorCountLoading, errorCounts } = strictInject(globalKey);
 
 const headers: Header[] = [
-    { text: "週", value: "week" },
+    { text: "開始", value: "start" },
+    { text: "終了", value: "end" },
     { text: "SD Console", value: "crmAdmin" },
     { text: "ExpertCloud v1", value: "crmExpertV1" },
     { text: "ExpertCloud v2", value: "crmExpertV2" },

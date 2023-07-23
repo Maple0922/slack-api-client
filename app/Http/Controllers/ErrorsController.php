@@ -44,14 +44,16 @@ class ErrorsController extends Controller
         return $weeks
             ->sortDesc()
             ->map(function ($week) use ($channels, $client, $endpoint, $headers) {
-                $beforeWeeks = Carbon::now()->subWeeks($week);
+                $beforeWeeks = Carbon::today()->subWeeks($week);
+                $startTime = $beforeWeeks->copy()->subDay(6);
+                $endTime = $beforeWeeks->copy()->addDay(1)->subSecond();
 
                 $errors = $channels
-                    ->flatMap(function ($channel) use ($client, $endpoint, $headers, $beforeWeeks) {
+                    ->flatMap(function ($channel) use ($client, $endpoint, $headers, $startTime, $endTime) {
                         $query = http_build_query([
                             'channel' => $this->slackChannelIds[$channel],
-                            'oldest' => strtotime('last thursday', $beforeWeeks->format('U')),
-                            'latest' => strtotime('this wednesday', $beforeWeeks->format('U')),
+                            'oldest' => $startTime->format('U'),
+                            'latest' => $endTime->format('U'),
                         ]);
                         $requestUrl = "{$endpoint}?{$query}";
                         $response = $client->get($requestUrl, ['headers' => $headers]);
@@ -67,9 +69,9 @@ class ErrorsController extends Controller
                         ];
                     });
 
-
                 return [
-                    'week' => "{$beforeWeeks->subDay(6)->format('Y-m-d')} - {$beforeWeeks->addDay(6)->format('Y-m-d')}",
+                    'start' => $startTime->isoFormat('YYYY-MM-DD (ddd) HH:mm'),
+                    'end' => $endTime->isoFormat('YYYY-MM-DD (ddd) HH:mm'),
                     ...$errors->toArray(),
                     'total' => $errors->sum()
                 ];

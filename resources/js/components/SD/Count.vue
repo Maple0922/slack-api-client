@@ -27,7 +27,8 @@ import { globalKey } from "@/provider";
 const { isSDCountLoading, sdCounts } = strictInject(globalKey);
 
 const headers: Header[] = [
-    { text: "週", value: "week" },
+    { text: "開始", value: "start" },
+    { text: "終了", value: "end" },
     { text: "件数", value: "count" },
 ];
 </script>
