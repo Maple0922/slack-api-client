@@ -114,7 +114,7 @@ class ErrorsController extends Controller
                     ->filter(fn ($message) => isset($message->attachments))
                     ->map(fn ($message) => [
                         'channel' => $channel,
-                        'content' => $message->attachments[0]->text,
+                        'content' => $message->attachments[0]->text ?? \Log::channel('single')->emergency(print_r($message->attachments[0], true)),
                         'datetime' => date('Y-m-d', substr($message->ts, 0, 10)),
                     ])
                     ->groupBy('content')

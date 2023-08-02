@@ -10,9 +10,6 @@ class DeleteMessages extends Command
 {
     public function __construct()
     {
-        $this->slackChannelIds = [
-            'mcSdCancel' => env('SLACK_CHANNEL_ID_MC_SD_CANCEL'),
-        ];
         parent::__construct();
     }
     /**
@@ -20,7 +17,7 @@ class DeleteMessages extends Command
      *
      * @var string
      */
-    protected $signature = 'delete:messages';
+    protected $signature = 'delete:messages {--channelId=} {--oldest=} {--latest=}';
 
     /**
      * The console command description.
@@ -36,14 +33,19 @@ class DeleteMessages extends Command
      */
     public function handle()
     {
+        if (!$this->option('channelId') || !$this->option('oldest') || !$this->option('latest')) {
+            $this->error('引数が足りません');
+            return 1;
+        }
+
         $existMessage = true;
         while ($existMessage) {
-
             $client = new Client();
             $endpoint = 'https://slack.com/api/conversations.history';
             $query = http_build_query([
-                'channel' => $this->slackChannelIds['mcSdCancel'],
-                'oldest' => Carbon::today()->format('U')
+                'channel' => $this->option('channelId'),
+                'oldest' => Carbon::parse($this->option('oldest'))->format('U'),
+                'latest' => Carbon::parse($this->option('latest'))->format('U'),
             ]);
 
             $headers = [
@@ -63,7 +65,6 @@ class DeleteMessages extends Command
             $messages
                 ->sortByDesc('ts')
                 ->map(fn ($message) => [
-                    'user' => $message->username ?? $message->user,
                     'ts' => $message->ts,
                     'created' => Carbon::parse($message->ts)->timezone('Asia/Tokyo')->format('Y-m-d H:i:s')
                 ])
@@ -71,7 +72,7 @@ class DeleteMessages extends Command
                     $client = new Client();
                     $endpoint = 'https://slack.com/api/chat.delete';
                     $query = http_build_query([
-                        'channel' => $this->slackChannelIds['mcSdCancel'],
+                        'channel' => $this->option('channelId'),
                         'ts' => $message['ts'],
                     ]);
 
@@ -80,7 +81,7 @@ class DeleteMessages extends Command
                     ];
 
                     $requestUrl = "{$endpoint}?{$query}";
-                    $res = $client->post($requestUrl, ['headers' => $headers]);
+                    $client->post($requestUrl, ['headers' => $headers]);
 
                     $this->info("{$message['created']}のメッセージを削除しました");
                     sleep(1);
