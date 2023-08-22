@@ -39,7 +39,7 @@ class ErrorsController extends Controller
             'money-career'
         ]);
 
-        $weeks = collect(range(0, 4));
+        $weeks = collect(range(0, 10));
 
         return $weeks
             ->sortDesc()

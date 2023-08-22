@@ -26,7 +26,7 @@ class SDsController extends Controller
 
         $channel = "mc-sd-crm";
 
-        $weeks = collect(range(0, 4));
+        $weeks = collect(range(0, 10));
 
         return $weeks
             ->sortDesc()
