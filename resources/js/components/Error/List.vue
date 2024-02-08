@@ -41,11 +41,7 @@ const channels = [
     { key: "crm-expert_v1", label: "Expert Cloud v1" },
     { key: "crm-expert_v2", label: "Expert Cloud v2" },
     { key: "crm-bot", label: "LINE Bot" },
-    { key: "crm-market-holder_egs", label: "Market Cloud for EGS" },
-    {
-        key: "crm-market-holder_senlife",
-        label: "Market Cloud for SENライフ",
-    },
+    { key: "crm-market-holder", label: "Market Cloud" },
     { key: "money-career", label: "マネーキャリア" },
 ];
 
