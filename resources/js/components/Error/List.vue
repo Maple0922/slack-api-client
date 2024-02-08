@@ -37,12 +37,11 @@ const headers: Header[] = [
 ];
 
 const channels = [
-    { key: "crm-admin", label: "SD Console" },
-    { key: "crm-expert_v1", label: "Expert Cloud v1" },
-    { key: "crm-expert_v2", label: "Expert Cloud v2" },
-    { key: "crm-bot", label: "LINE Bot" },
-    { key: "crm-market-holder", label: "Market Cloud" },
     { key: "money-career", label: "マネーキャリア" },
+    { key: "crm-admin", label: "SDコンソール" },
+    { key: "crm-expert_v1", label: "MCエキスパートクラウド" },
+    { key: "crm-bot", label: "LINE Bot" },
+    { key: "crm-market-holder", label: "MCマーケットクラウド" },
 ];
 
 const displayErrorList = computed(() => {

@@ -12,8 +12,7 @@ class ErrorsController extends Controller
     {
         $this->slackChannelIds = [
             'crm-admin' => env('SLACK_CHANNEL_ID_ERROR_CRM_ADMIN_PRODUCTION'),
-            'crm-expert_v1' => env('SLACK_CHANNEL_ID_ERROR_CRM_EXPERT_V1_PRODUCTION'),
-            'crm-expert_v2' => env('SLACK_CHANNEL_ID_ERROR_CRM_EXPERT_V2_PRODUCTION'),
+            'crm-expert' => env('SLACK_CHANNEL_ID_ERROR_CRM_EXPERT_PRODUCTION'),
             'crm-bot' => env('SLACK_CHANNEL_ID_ERROR_CRM_BOT_PRODUCTION'),
             'crm-market-holder' => env('SLACK_CHANNEL_ID_ERROR_CRM_MARKET_HOLDER_PRODUCTION'),
             'money-career' => env('SLACK_CHANNEL_ID_ERROR_MONEY_CAREER_PRODUCTION')
@@ -30,8 +29,7 @@ class ErrorsController extends Controller
 
         $channels = collect([
             'crm-admin',
-            'crm-expert_v1',
-            'crm-expert_v2',
+            'crm-expert',
             'crm-bot',
             'crm-market-holder',
             'money-career'
@@ -43,15 +41,20 @@ class ErrorsController extends Controller
             ->sortDesc()
             ->map(function ($week) use ($channels, $client, $endpoint, $headers) {
                 $beforeWeeks = Carbon::today()->subWeeks($week);
-                $startTime = $beforeWeeks->copy()->subDay(6);
-                $endTime = $beforeWeeks->copy()->addDay(1)->subSecond();
+                $start = Carbon::parse(
+                    strtotime('last wednesday', $beforeWeeks->format('U'))
+                    )->addDay()->startOfDay();
+
+                $end = Carbon::parse(
+                    strtotime('this tuesday', $beforeWeeks->format('U'))
+                    )->addDay()->endOfDay();
 
                 $errors = $channels
-                    ->flatMap(function ($channel) use ($client, $endpoint, $headers, $startTime, $endTime) {
+                    ->flatMap(function ($channel) use ($client, $endpoint, $headers, $start, $end) {
                         $query = http_build_query([
                             'channel' => $this->slackChannelIds[$channel],
-                            'oldest' => $startTime->format('U'),
-                            'latest' => $endTime->format('U'),
+                            'oldest' => $start->format('U'),
+                            'latest' => $end->format('U'),
                         ]);
                         $requestUrl = "{$endpoint}?{$query}";
                         $response = $client->get($requestUrl, ['headers' => $headers]);
@@ -68,8 +71,8 @@ class ErrorsController extends Controller
                     });
 
                 return [
-                    'start' => $startTime->isoFormat('YYYY-MM-DD (ddd) HH:mm'),
-                    'end' => $endTime->isoFormat('YYYY-MM-DD (ddd) HH:mm'),
+                    'start' => $start->isoFormat('YYYY-MM-DD (ddd) HH:mm'),
+                    'end' => $end->isoFormat('YYYY-MM-DD (ddd) HH:mm'),
                     ...$errors->toArray(),
                     'total' => $errors->sum()
                 ];
@@ -87,8 +90,7 @@ class ErrorsController extends Controller
 
         $channels = [
             "crm-admin",
-            "crm-expert_v1",
-            "crm-expert_v2",
+            "crm-expert",
             "crm-bot",
             "crm-market-holder",
             "money-career"

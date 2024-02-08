@@ -4,6 +4,7 @@ export interface ErrorCount extends Item {
     week: string;
     crmAdmin: number;
     crmExpert: number;
+    crmMarketHolder: number;
     crmBot: number;
     moneyCareer: number;
 }

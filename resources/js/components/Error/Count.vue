@@ -29,12 +29,11 @@ const { isErrorCountLoading, errorCounts } = strictInject(globalKey);
 const headers: Header[] = [
     { text: "開始", value: "start" },
     { text: "終了", value: "end" },
-    { text: "SD Console", value: "crmAdmin" },
-    { text: "ExpertCloud v1", value: "crmExpertV1" },
-    { text: "ExpertCloud v2", value: "crmExpertV2" },
-    { text: "LINE Bot", value: "crmBot" },
     { text: "マネーキャリア", value: "moneyCareer" },
-    { text: "マーケットクラウド", value: "crmMarketHolder" },
+    { text: "SDコンソール", value: "crmAdmin" },
+    { text: "MCエキスパートクラウド", value: "crmExpert" },
+    { text: "MCマーケットクラウド", value: "crmMarketHolder" },
+    { text: "LINE Bot", value: "crmBot" },
     { text: "合計", value: "total" },
 ];
 </script>
