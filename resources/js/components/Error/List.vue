@@ -39,7 +39,7 @@ const headers: Header[] = [
 const channels = [
     { key: "money-career", label: "マネーキャリア" },
     { key: "crm-admin", label: "SDコンソール" },
-    { key: "crm-expert_v1", label: "MCエキスパートクラウド" },
+    { key: "crm-expert", label: "MCエキスパートクラウド" },
     { key: "crm-bot", label: "LINE Bot" },
     { key: "crm-market-holder", label: "MCマーケットクラウド" },
 ];
