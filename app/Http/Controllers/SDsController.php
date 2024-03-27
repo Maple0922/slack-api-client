@@ -28,6 +28,9 @@ class SDsController extends Controller
         "<@U04445TS1QQ>" => "@chiho suzuki",
         "<@U05N2EYAVT5>" => "@haruka nishino",
         "<@U02UZS2MCB1>" => "@hiroki nagai",
+        "<@U06BAUS9A3Y>" => "@chinami ebihara",
+        "<@U066DPLTE7R>" => "@kyohei mori",
+        "<@U05K0KYC5V1>" => "@yuka futami",
         "<!subteam^S033HEA941W|@engineer_executive>" => "@engineer_executive",
     ];
 
@@ -48,7 +51,10 @@ class SDsController extends Controller
         "U037FRKMATV" => "@nana imura",
         "U04445TS1QQ" => "@chiho suzuki",
         "U05N2EYAVT5" => "@haruka nishino",
-        "U02UZS2MCB1" => "@hiroki nagai"
+        "U02UZS2MCB1" => "@hiroki nagai",
+        "U06BAUS9A3Y" => "@chinami ebihara",
+        "U066DPLTE7R" => "@kyohei mori",
+        "U05K0KYC5V1" => "@yuka futami"
     ];
 
     public function __construct()
