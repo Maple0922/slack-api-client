@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Http;
 
 class NotifyDevelopPoint extends Command
 {
-    protected $signature = 'slack:notifyDevelopPoint';
+    protected $signature = 'slack:notifyDevelopPoint {--channel=notifyTest}';
 
     protected $description = '開発ポイントの進捗をSlack通知する';
 
@@ -37,7 +37,7 @@ class NotifyDevelopPoint extends Command
 
         // Slackに通知
         $headers = ['Content-type' => 'application/json'];
-        $url = config('slack.webhook.notifyTest');
+        $url = config("slack.webhook.{$this->option('channel')}");
         $response = Http::withHeaders($headers)->post($url, $mainPayloads);
 
         // 失敗時に再度通知
