@@ -4,33 +4,18 @@ return [
     'main' => [
         'username' => '開発ポイント',
         'icon_emoji' => ':chipichapa:',
+        'text' => '開発ポイント達成進捗',
         "blocks" => [
             [
                 "type" => "section",
                 "text" => [
                     "type" => "mrkdwn",
-                    "text" => "*%topPoint%* / *%bottomPoint%*"
+                    "text" => "<!subteam^S033HEA941W|@engineer_executive> %eol% :chipichapa: *達成率: %doneRate% (%donePoint%/%totalPoint%)* :chipichapa:"
                 ],
             ],
             [
                 "type" => "divider"
-            ],
-            // ここにmemberが入る
-
-            // [
-            //     "type" => "actions",
-            //     "elements" => [
-            //         [
-            //             "type" => "button",
-            //             "text" => [
-            //                 "type" => "plain_text",
-            //                 "emoji" => true,
-            //                 "text" => "Next 2 Results"
-            //             ],
-            //             "value" => "click_me_123"
-            //         ]
-            //     ]
-            // ]
+            ]
         ]
     ],
 

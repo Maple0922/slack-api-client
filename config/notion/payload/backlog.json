@@ -1,0 +1,62 @@
+{
+    "filter": {
+        "and": [
+            {
+                "property": "DeadLine Date",
+                "relation": {
+                    "contains": "e4a67b14b6364cb282fc2c668a30859c"
+                }
+            },
+            {
+                "or": [
+                    {
+                        "property": "Status",
+                        "select": {
+                            "equals": "In Review"
+                        }
+                    },
+                    {
+                        "property": "Status",
+                        "select": {
+                            "equals": "Planned"
+                        }
+                    },
+                    {
+                        "property": "Status",
+                        "select": {
+                            "equals": "Released"
+                        }
+                    },
+                    {
+                        "property": "Status",
+                        "select": {
+                            "equals": "Merged"
+                        }
+                    },
+                    {
+                        "property": "Status",
+                        "select": {
+                            "equals": "In Progress"
+                        }
+                    },
+                    {
+                        "property": "Status",
+                        "select": {
+                            "equals": "Planning"
+                        }
+                    }
+                ]
+            },
+            {
+                "or": [
+                    {
+                        "property": "Manager",
+                        "people": {
+                            "contains": ""
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

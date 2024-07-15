@@ -1,0 +1,8 @@
+{
+    "filter": {
+        "property": "End",
+        "rich_text": {
+            "equals": "2024/07/16"
+        }
+    }
+}
