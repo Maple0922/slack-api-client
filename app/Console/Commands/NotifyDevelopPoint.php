@@ -24,13 +24,14 @@ class NotifyDevelopPoint extends Command
     {
         // Backlogから今週タスクについての情報を取得
         [
+            'targetPoint' => $targetPoint,
             'totalPoint' => $totalPoint,
             'donePoint' => $donePoint,
             'memberTasks' => $memberTasks
         ] = $this->getBacklogRecordDetails();
 
         // 取得した情報からSlack通知用のデータを生成
-        $mainPayloads = $this->generateMainPayload($totalPoint, $donePoint);
+        $mainPayloads = $this->generateMainPayload($targetPoint, $totalPoint, $donePoint);
         $memberPointPayloads = $this->generateMemberPointPayload($memberTasks);
         // メインブロックの中にメンバーごとのポイント情報を追加
         array_splice($mainPayloads['blocks'], 2, 0, $memberPointPayloads);
@@ -89,6 +90,7 @@ class NotifyDevelopPoint extends Command
             ])
             ->filter(fn ($task) => $task['user']);
 
+        $targetPoint = $members->sum('target_point');
         $totalPoint = $tasks->sum('point');
         $donePoint = $tasks->filter(fn ($task) => $task['isDone'])->sum('point');
 
@@ -108,23 +110,27 @@ class NotifyDevelopPoint extends Command
             ->values();
 
         return [
+            'targetPoint' => $targetPoint,
             'totalPoint' => $totalPoint,
             'donePoint' => $donePoint,
             'memberTasks' => $memberTasks
         ];
     }
 
-    private function generateMainPayload(float $totalPoint, float $donePoint): array
+    private function generateMainPayload(float $targetPoint, float $totalPoint, float $donePoint): array
     {
         $mainTemplate = json_encode(config('slack.template.main'));
 
+        $targetRate = $targetPoint === 0 ? 0 : round($donePoint / $targetPoint, 2);
         $doneRate = $totalPoint === 0 ? 0 : round($donePoint / $totalPoint, 2);
         $doneRateCount = floor($doneRate * 10);
         $doneRateStars = str_repeat(':star:', $doneRateCount) . str_repeat(':black_star:', 10 - $doneRateCount);
 
         $replace = [
+            '%targetPoint%' => $targetPoint,
             '%totalPoint%' => $totalPoint,
             '%donePoint%' => $donePoint,
+            '%targetRate%' => $targetRate * 100 . "%",
             '%doneRate%' => $doneRate * 100 . "%",
             '%doneRateStars%' => $doneRateStars,
             '%eol%' => '\n',

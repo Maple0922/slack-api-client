@@ -10,7 +10,7 @@ return [
                 "type" => "section",
                 "text" => [
                     "type" => "mrkdwn",
-                    "text" => "<!subteam^S033HEA941W|@engineer_executive> %eol% :chipichapa: *達成率: %doneRate% (%donePoint%/%totalPoint%)* :chipichapa:"
+                    "text" => "<!subteam^S033HEA941W|@engineer_executive> %eol%%eol% :chipichapa: *今週タスク達成率: %doneRate% (%donePoint%/%totalPoint%)* :chipichapa: %eol%%eol% :chipichapa: *目標ポイント達成率: %targetRate% (%donePoint%/%targetPoint%)* :chipichapa:"
                 ],
             ],
             [
