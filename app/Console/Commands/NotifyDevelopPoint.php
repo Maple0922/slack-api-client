@@ -65,7 +65,7 @@ class NotifyDevelopPoint extends Command
         ];
 
         // Backlog数値管理から、当日を含めた次の火曜日のページIDを取得
-        $nextTuesday = Carbon::yesterday()->next(Carbon::TUESDAY)->format('Y/m/d');
+        $nextTuesday = Carbon::now()->subHours(36)->next(Carbon::TUESDAY)->format('Y/m/d');
         $parentPayload = config('notion.payload.parent');
         $parentPayload['filter']['rich_text']['equals'] = $nextTuesday;
         $parentResponse = Http::withHeaders($headers)->post($parentEndPoint, $parentPayload);
