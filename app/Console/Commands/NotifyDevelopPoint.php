@@ -82,20 +82,20 @@ class NotifyDevelopPoint extends Command
         $members = $this->member->where('is_valid', 1)->get();
 
         $tasks = $results
-            ->map(fn ($result) => [
+            ->map(fn($result) => [
                 'title' => $result['properties']['Backlog']['title'][0]['plain_text'],
-                'user' => $members->first(fn ($member) => $member->notion_id === $result['properties']['Manager']['people'][0]['id']),
+                'user' => $members->first(fn($member) => $member->notion_id === $result['properties']['Manager']['people'][0]['id']),
                 'point' => $result['properties']['Point']['number'],
                 'isDone' => !!$result['properties']['InReview Date']['relation']
             ])
-            ->filter(fn ($task) => $task['user']);
+            ->filter(fn($task) => $task['user']);
 
         $targetPoint = $members->sum('target_point');
         $totalPoint = $tasks->sum('point');
-        $donePoint = $tasks->filter(fn ($task) => $task['isDone'])->sum('point');
+        $donePoint = $tasks->filter(fn($task) => $task['isDone'])->sum('point');
 
         $memberTasks = $tasks
-            ->groupBy(fn ($task) => $task['user']['notion_id'])
+            ->groupBy(fn($task) => $task['user']['notion_id'])
             ->map(function ($tasks) {
                 $user = $tasks[0]['user'];
                 return [
@@ -103,10 +103,10 @@ class NotifyDevelopPoint extends Command
                     'imageUrl' => $user->image_url,
                     'targetPoint' => $user->target_point,
                     'totalPoint' => $tasks->sum('point'),
-                    'donePoint' => $tasks->filter(fn ($task) => $task['isDone'])->sum('point')
+                    'donePoint' => $tasks->filter(fn($task) => $task['isDone'])->sum('point')
                 ];
             })
-            ->sortByDesc(fn ($member) => $member['totalPoint'] === 0 ? 0 : round($member['donePoint'] / $member['totalPoint'], 2))
+            ->sortByDesc(fn($member) => $member['totalPoint'] === 0 ? 0 : round($member['donePoint'] / $member['totalPoint'], 2))
             ->values();
 
         return [

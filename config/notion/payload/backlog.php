@@ -13,37 +13,37 @@ return [
                 "or" => [
                     [
                         "property" => "Status",
-                        "select" => [
+                        "status" => [
                             "equals" => "In Review"
                         ]
                     ],
                     [
                         "property" => "Status",
-                        "select" => [
+                        "status" => [
                             "equals" => "Planned"
                         ]
                     ],
                     [
                         "property" => "Status",
-                        "select" => [
+                        "status" => [
                             "equals" => "Released"
                         ]
                     ],
                     [
                         "property" => "Status",
-                        "select" => [
+                        "status" => [
                             "equals" => "Merged"
                         ]
                     ],
                     [
                         "property" => "Status",
-                        "select" => [
+                        "status" => [
                             "equals" => "In Progress"
                         ]
                     ],
                     [
                         "property" => "Status",
-                        "select" => [
+                        "status" => [
                             "equals" => "Planning"
                         ]
                     ]
