@@ -48,6 +48,12 @@ return [
                         ]
                     ]
                 ]
+            ],
+            [
+                "property" => "Point",
+                "number" => [
+                    "greater_than" => 0
+                ]
             ]
             // [
             //     "or" => [
