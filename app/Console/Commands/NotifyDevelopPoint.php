@@ -106,7 +106,7 @@ class NotifyDevelopPoint extends Command
                     'donePoint' => $tasks->filter(fn($task) => $task['isDone'])->sum('point')
                 ];
             })
-            ->sortByDesc(fn($member) => $member['totalPoint'] === 0 ? 0 : round($member['donePoint'] / $member['totalPoint'], 2))
+            ->sortByDesc(fn($member) => $member['targetPoint'] === 0 ? 0 : round($member['donePoint'] / $member['targetPoint'], 2))
             ->values();
 
         return [
