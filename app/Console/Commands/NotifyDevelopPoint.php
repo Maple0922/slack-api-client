@@ -91,8 +91,8 @@ class NotifyDevelopPoint extends Command
             ->filter(fn($task) => $task['user']);
 
         $targetPoint = $members->sum('target_point');
-        $totalPoint = $tasks->sum('point');
-        $donePoint = $tasks->filter(fn($task) => $task['isDone'])->sum('point');
+        $totalPoint = $tasks->sum(callback: 'point');
+        $donePoint = $tasks->filter(callback: fn($task) => $task['isDone'])->sum('point');
 
         $memberTasks = $tasks
             ->groupBy(fn($task) => $task['user']['notion_id'])
@@ -123,8 +123,8 @@ class NotifyDevelopPoint extends Command
 
         $targetRate = $targetPoint === 0 ? 0 : round($donePoint / $targetPoint, 2);
         $doneRate = $totalPoint === 0 ? 0 : round($donePoint / $totalPoint, 2);
-        $doneRateCount = floor($doneRate * 10);
-        $doneRateStars = str_repeat(':star:', $doneRateCount) . str_repeat(':black_star:', 10 - $doneRateCount);
+        $targetRateCount = floor($targetRate * 10);
+        $doneRateStars = str_repeat(':star:', $targetRateCount) . str_repeat(':black_star:', 10 - $targetRateCount);
 
         $replace = [
             '%targetPoint%' => $targetPoint,
@@ -160,8 +160,8 @@ class NotifyDevelopPoint extends Command
                 ];
                 $doneRate = $totalPoint === 0 ? 0 : round($donePoint / $totalPoint, 2);
                 $targetRate = $targetPoint === 0 ? 0 : round($donePoint / $targetPoint, 2);
-                $doneRateCount = floor($doneRate * 10);
-                $doneRateStars = str_repeat(':star:', $doneRateCount) . str_repeat(':black_star:', 10 - $doneRateCount);
+                $targetRateCount = floor($targetRate * 10) > 10 ? 10 : floor($targetRate * 10);
+                $doneRateStars = str_repeat(':star:', $targetRateCount) . str_repeat(':black_star:', 10 - $targetRateCount);
 
                 $replace = [
                     '%memberName%' => $name,
