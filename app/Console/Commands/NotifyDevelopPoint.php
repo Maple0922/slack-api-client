@@ -123,7 +123,7 @@ class NotifyDevelopPoint extends Command
 
         $targetRate = $targetPoint === 0 ? 0 : round($donePoint / $targetPoint, 2);
         $doneRate = $totalPoint === 0 ? 0 : round($donePoint / $totalPoint, 2);
-        $targetRateCount = floor($targetRate * 10);
+        $targetRateCount = floor($targetRate * 10) > 10 ? 10 : floor($targetRate * 10);
         $doneRateStars = str_repeat(':star:', $targetRateCount) . str_repeat(':black_star:', 10 - $targetRateCount);
 
         $replace = [
