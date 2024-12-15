@@ -1,47 +1,81 @@
-# PHP 8.3 Apache ベースイメージを使用
+# ビルドステージ
+FROM node:16 as build-stage
+
+WORKDIR /app
+
+# パッケージファイルをコピー
+COPY package*.json ./
+
+# 依存関係のインストール
+RUN npm ci
+
+# ソースコードをコピー
+COPY . .
+
+# Viteでビルド
+RUN npm run build
+
+
+FROM flyio/litefs:0.5 as litefs
+
 FROM php:8.3-apache
 
-# システムの依存関係をインストール
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
+    git \
+    curl \
     libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
+    libonig-dev \
+    libxml2-dev \
     zip \
     unzip \
-    git \
-    curl
+    vim \
+    sqlite3 \
+    cron
 
-# PHP 拡張機能をインストール
-RUN docker-php-ext-install pdo pdo_mysql mysqli
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg
-RUN docker-php-ext-install -j$(nproc) gd
+RUN export EDITOR=vim
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Composer のインストール
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# Install PHP extensions
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
-# アプリケーションファイルをコピー
-COPY . /var/www/html
+# Get latest Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Apache の設定
+# Set working directory
+WORKDIR /var/www
+
+# Copy LiteFS
+COPY --from=litefs /usr/local/bin/litefs /usr/local/bin/litefs
+
+# Copy application files
+COPY . /var/www
+
+# Install dependencies
+RUN composer install
+
+# Change ownership of our applications
+RUN chown -R www-data:www-data /var/www
+
+# Configure Apache to listen on port 8080
+RUN sed -i 's/Listen 80/Listen 8080/' /etc/apache2/ports.conf \
+    && sed -i 's/<VirtualHost \*:80>/<VirtualHost *:8080>/' /etc/apache2/sites-available/000-default.conf
+
+# Set the document root to public
+RUN sed -i 's#/var/www/html#/var/www/public#g' /etc/apache2/sites-available/000-default.conf
+
+# Enable mod_rewrite
 RUN a2enmod rewrite
 
-# 作業ディレクトリを設定
-WORKDIR /var/www/html
+# Copy LiteFS config
+COPY litefs.yml /etc/litefs.yml
 
-# Composer の依存関係をインストール（composer.json がある場合）
-RUN if [ -f "composer.json" ]; then composer install --no-interaction --no-dev --prefer-dist; fi
+# Start LiteFS and Apache
+CMD litefs mount & apache2-foreground
 
-# パーミッションを設定
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html
+RUN mkdir -p /var/lib/litefs/data && chown -R www-data:www-data /var/lib/litefs/data
 
-# Apache がフォアグラウンドで実行されるようにする
-CMD ["apache2-foreground"]
-
-# Composer の実行前に環境変数を設定
-ENV COMPOSER_ALLOW_SUPERUSER=1
-
-# composer install コマンドを修正
-RUN if [ -f "composer.json" ]; then \
-    composer install --no-interaction --no-dev --prefer-dist --ignore-platform-reqs; \
-    fi
+COPY start.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
+CMD ["/usr/local/bin/start.sh"]

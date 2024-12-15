@@ -15,4 +15,14 @@ export default defineConfig({
             "@": `${__dirname}/resources/js`,
         },
     },
+    server: {
+        https: true,
+        host: "0.0.0.0",
+        hmr: {
+            host: "localhost",
+        },
+    },
+    build: {
+        base: "https://slack-api-client.fly.dev/",
+    },
 });

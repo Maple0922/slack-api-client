@@ -1,60 +1,39 @@
- app = "slack-api-client"
+# fly.toml app configuration file generated for slack-api-client on 2024-12-15T12:42:32+09:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'slack-api-client'
+primary_region = 'hkg'
+console_command = 'php /var/www/html/artisan tinker'
 
 [build]
-  dockerfile = "Dockerfile"
   [build.args]
-    PHP_VERSION = "8.3"
+    NODE_VERSION = '18'
+    PHP_VERSION = '8.0'
 
 [env]
-  PORT = "8080"
-  SLACK_CHANNEL_ID_MC_SD_CRM = "C01J5RV3FRB"
-  SLACK_CHANNEL_ID_MC_SD_CANCEL = "C011DTCF5P0"
-  SLACK_CHANNEL_ID_DATABASE_CONSISTENCY = "C03G01NAYQY"
-  SLACK_CHANNEL_ID_ERROR_CRM_ADMIN_PRODUCTION = "C032R5AFCP4"
-  SLACK_CHANNEL_ID_ERROR_CRM_EXPERT_PRODUCTION = "C05DBDZC560"
-  SLACK_CHANNEL_ID_ERROR_CRM_BOT_PRODUCTION = "C0330BPNY6S"
-  SLACK_CHANNEL_ID_ERROR_CRM_MARKET_HOLDER_PRODUCTION = "C06HE8NP74P"
-  SLACK_CHANNEL_ID_ERROR_MONEY_CAREER_PRODUCTION = "C0237TCAEBU"
-  SLACK_CHANNEL_ID_ERROR_LINE_CONNECT = "C04PVGUUR4J"
+  APP_ENV = 'production'
+  APP_URL = 'https://slack-api-client.fly.dev'
+  PORT = '8080'
+  DB_CONNECTION = 'sqlite'
+  DB_DATABASE = '/var/lib/litefs/data/database.sqlite'
+  LOG_CHANNEL = "stack"
+  SESSION_DRIVER = 'cookie'
+  SESSION_SECURE_COOKIE = 'true'
 
-  SLACK_NOTIFY_TEST_WEBHOOK_URL = "https://hooks.slack.com/services/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"
-  SLACK_ENGINEER_DEV_POINT_WEBHOOK_URL = "https://hooks.slack.com/services/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"
-
-  WWWUSER = "www-data"
-  WWWGROUP = "www-data"
+[[mounts]]
+  source = 'data'
+  destination = '/var/www/html/database'
 
 [http_service]
   internal_port = 8080
   force_https = true
   auto_stop_machines = true
   auto_start_machines = true
-  min_machines_running = 0
-
-[mounts]
-  source="myapp_data"
-  destination="/var/www/html"
-
-[[services]]
-  protocol = "tcp"
-  internal_port = 8080
-
-  [[services.ports]]
-    port = 80
-    handlers = ["http"]
-
-  [[services.ports]]
-    port = 443
-    handlers = ["tls", "http"]
-
-  [services.concurrency]
-    type = "connections"
-    hard_limit = 25
-    soft_limit = 20
+  min_machines_running = 1
 
 [[vm]]
-  cpu_kind = "shared"
+  cpu_kind = 'shared'
   cpus = 1
   memory_mb = 1024
-
-[deploy]
-  release_command = "php /var/www/html/artisan migrate --force"

@@ -15,7 +15,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command('slack:notifyDevelopPoint --channel=engineerDevPoint')
+            ->at('09:00')
+            ->at('15:00')
+            ->at('21:00');
     }
 
     /**
@@ -25,7 +28,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }
