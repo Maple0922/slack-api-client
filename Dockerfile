@@ -71,19 +71,26 @@ RUN a2enmod rewrite
 # Copy LiteFS config
 COPY litefs.yml /etc/litefs.yml
 
-# Execute SQLite migration
-RUN sqlite3 /var/lib/litefs/data/database.sqlite < /var/www/database/default.sql
+RUN echo "EXTRA_OPTS='-L 5'" >> /etc/default/cron
 
 # Set up cron job
-RUN echo "* * * * * /usr/local/bin/php /var/www/artisan slack:notifyDevelopPoint" > /etc/cron.d/laravel
+RUN echo "* * * * * /usr/local/bin/php /var/www/artisan slack:notifyDevelopPoint >> /var/log/cron.log 2>&1" > /etc/cron.d/laravel
 
 # Apply cron job
 RUN crontab /etc/cron.d/laravel
+
+# Create log file
+RUN touch /var/log/cron.log
+
+# restart cron
+RUN service cron restart
 
 # Start LiteFS and Apache
 CMD litefs mount & apache2-foreground
 
 RUN mkdir -p /var/lib/litefs/data && chown -R www-data:www-data /var/lib/litefs/data
+
+RUN printenv | sed 's/^\(.*\)$/\1/g' > /etc/environment
 
 COPY start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh

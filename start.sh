@@ -12,4 +12,4 @@ php artisan migrate --force
 # LiteFSとApacheの起動
 litefs mount & apache2-foreground
 
-# npm run dev
+npm run dev
