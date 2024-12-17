@@ -62,7 +62,8 @@ class NotifyDevelopPoint extends Command
 
         $headers = [
             'Authorization' => "Bearer {$notionToken}",
-            'Notion-Version' => '2022-06-28'
+            'Notion-Version' => '2022-06-28',
+            'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
         ];
 
         // Backlog数値管理から、当日を含めた次の火曜日のページIDを取得
@@ -121,8 +122,8 @@ class NotifyDevelopPoint extends Command
     {
         $mainTemplate = json_encode(config('slack.template.main'));
 
-        $targetRate = $targetPoint === 0 ? 0 : round($donePoint / $targetPoint, 2);
-        $doneRate = $totalPoint === 0 ? 0 : round($donePoint / $totalPoint, 2);
+        $targetRate = (int)$targetPoint === 0 ? 0 : round($donePoint / $targetPoint, 2);
+        $doneRate = (int)$totalPoint === 0 ? 0 : round($donePoint / $totalPoint, 2);
         $targetRateCount = floor($targetRate * 10) > 10 ? 10 : floor($targetRate * 10);
         $doneRateStars = str_repeat(':star:', $targetRateCount) . str_repeat(':black_star:', 10 - $targetRateCount);
 
