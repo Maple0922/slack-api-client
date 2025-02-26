@@ -15,10 +15,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('slack:notifyDevelopPoint --channel=engineerDevPoint')
-            ->at('09:00')
-            ->at('15:00')
-            ->at('21:00');
+        $schedule->command('slack:notifyDevelopPoint --channel=engineerDevPoint')->dailyAt('09:00');
+        $schedule->command('slack:notifyDevelopPoint --channel=engineerDevPoint')->dailyAt('15:00');
+        $schedule->command('slack:notifyDevelopPoint --channel=engineerDevPoint')->dailyAt('21:00');
     }
 
     /**
