@@ -58,7 +58,6 @@ class NotifyDevelopPoint extends Command
 
         $backlogEndpoint = "{$notionApiUrl}/databases/{$backlogDatabaseUrl}/query";
         $parentEndPoint = "{$notionApiUrl}/databases/{$parentDatabaseUrl}/query";
-        // $usersEndPoint = "{$notionApiUrl}/users";
 
         $headers = [
             'Authorization' => "Bearer {$notionToken}",
@@ -73,16 +72,33 @@ class NotifyDevelopPoint extends Command
         $parentResponse = Http::withHeaders($headers)->post($parentEndPoint, $parentPayload);
         $parentPageId = $parentResponse['results'][0]['id'];
 
-        // Backlogから、次の火曜日のページIDの子ページを取得
-        $backlogPayload = config('notion.payload.backlog');
-        $backlogPayload['filter']['and'][0]['relation']['contains'] = $parentPageId;
-        $backlogResponse = Http::withHeaders($headers)->post($backlogEndpoint, $backlogPayload);
+        // Backlogから、次の火曜日のページIDの子ページを取得（ページネーション対応）
+        $allResults = collect();
+        $startCursor = null;
+        $hasMore = true;
 
-        $results = collect($backlogResponse['results']);
+        while ($hasMore) {
+            $backlogPayload = config('notion.payload.backlog');
+            $backlogPayload['filter']['and'][0]['relation']['contains'] = $parentPageId;
+
+            // ページネーション用のstart_cursorを設定
+            if ($startCursor) {
+                $backlogPayload['start_cursor'] = $startCursor;
+            }
+
+            $backlogResponse = Http::withHeaders($headers)->post($backlogEndpoint, $backlogPayload);
+
+            // 結果を追加
+            $allResults = $allResults->merge($backlogResponse['results']);
+
+            // 次のページがあるかチェック
+            $hasMore = $backlogResponse['has_more'] ?? false;
+            $startCursor = $backlogResponse['next_cursor'] ?? null;
+        }
 
         $members = $this->member->where('is_valid', 1)->get();
 
-        $tasks = $results
+        $tasks = $allResults
             ->map(fn($result) => [
                 'title' => $result['properties']['Backlog']['title'][0]['plain_text'] ?? 'タイトルなし',
                 'user' => $members->first(fn($member) => $member->notion_id === $result['properties']['Manager']['people'][0]['id']),
