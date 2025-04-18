@@ -50,10 +50,5 @@ class NotifyEngineerMtgOrder extends Command
             $failedContents = config('slack.template.engineerMtgOrder.failed');
             Http::withHeaders($headers)->post($url, $failedContents);
         }
-        $this->info('Slack notification sent successfully.');
-        $this->info('エンジニア週次MTGの順番を勝手に決める猫');
-        $this->info('```');
-        $this->info($members);
-        $this->info('```');
     }
 }
