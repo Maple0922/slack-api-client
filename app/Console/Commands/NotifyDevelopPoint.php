@@ -43,7 +43,7 @@ class NotifyDevelopPoint extends Command
 
         // 失敗時に再度通知
         if ($response->status() >= 300) {
-            $failedContents = config('slack.template.failed');
+            $failedContents = config('slack.template.developPoint.failed');
             Http::withHeaders($headers)->post($url, $failedContents);
         }
     }
@@ -136,7 +136,7 @@ class NotifyDevelopPoint extends Command
 
     private function generateMainPayload(float $targetPoint, float $totalPoint, float $donePoint): array
     {
-        $mainTemplate = json_encode(config('slack.template.main'));
+        $mainTemplate = json_encode(config('slack.template.developPoint.main'));
 
         $targetRate = (int)$targetPoint === 0 ? 0 : round($donePoint / $targetPoint, 2);
         $doneRate = (int)$totalPoint === 0 ? 0 : round($donePoint / $totalPoint, 2);
@@ -160,7 +160,7 @@ class NotifyDevelopPoint extends Command
     {
         return collect($memberTasks)
             ->flatMap(function ($member): array {
-                $memberTemplate = json_encode(config('slack.template.member'));
+                $memberTemplate = json_encode(config('slack.template.developPoint.member'));
 
                 [
                     $name,

@@ -4,6 +4,8 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Console\Commands\NotifyDevelopPoint;
+use App\Console\Commands\NotifyEngineerMtgOrder;
 
 class Kernel extends ConsoleKernel
 {
@@ -15,10 +17,13 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // 平日のみ
-        $schedule->command('slack:notifyDevelopPoint --channel=engineerDevPoint')->weekdays()->dailyAt('09:00');
-        $schedule->command('slack:notifyDevelopPoint --channel=engineerDevPoint')->weekdays()->dailyAt('15:00');
-        $schedule->command('slack:notifyDevelopPoint --channel=engineerDevPoint')->weekdays()->dailyAt('21:00');
+        // エンジニア週次の順番
+        $schedule->command(NotifyEngineerMtgOrder::class, ['--channel' => 'engineerGeneral'])->weeklyOn(3, '15:00');
+
+        // 開発ポイント進捗
+        $schedule->command(NotifyDevelopPoint::class, ['--channel' => 'notifyDevelopPoint'])->weekdays()->dailyAt('09:00');
+        $schedule->command(NotifyDevelopPoint::class, ['--channel' => 'notifyDevelopPoint'])->weekdays()->dailyAt('15:00');
+        $schedule->command(NotifyDevelopPoint::class, ['--channel' => 'notifyDevelopPoint'])->weekdays()->dailyAt('21:00');
     }
 
     /**
