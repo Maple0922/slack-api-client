@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Webhook;
 
+use App\Http\Controllers\Controller;
 use GuzzleHttp\Client;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
