@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Webhook\NotionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,11 +19,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::prefix('/sds')->group(function () {
-    Route::get('/count', [App\Http\Controllers\SDsController::class, 'count']);
-    Route::get('/list', [App\Http\Controllers\SDsController::class, 'list']);
-});
-Route::prefix('/errors')->group(function () {
-    Route::get('/count', [App\Http\Controllers\ErrorsController::class, 'count']);
-    Route::get('/list', [App\Http\Controllers\ErrorsController::class, 'list']);
+Route::prefix('/webhook')->group(function () {
+    Route::prefix('/notion')->group(function () {
+        Route::prefix('/roadmap')->group(function () {
+            Route::post('/created', [NotionController::class, 'roadmapCreated'])->name('webhook.notion.roadmap.created');
+        });
+    });
 });
