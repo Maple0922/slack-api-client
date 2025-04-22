@@ -21,9 +21,9 @@ class Kernel extends ConsoleKernel
         $schedule->command(NotifyEngineerMtgOrder::class, ['--channel' => 'engineerGeneral'])->weeklyOn(3, '15:00');
 
         // 開発ポイント進捗
-        $schedule->command(NotifyDevelopPoint::class, ['--channel' => 'notifyDevelopPoint'])->weekdays()->dailyAt('09:00');
-        $schedule->command(NotifyDevelopPoint::class, ['--channel' => 'notifyDevelopPoint'])->weekdays()->dailyAt('15:00');
-        $schedule->command(NotifyDevelopPoint::class, ['--channel' => 'notifyDevelopPoint'])->weekdays()->dailyAt('21:00');
+        $schedule->command(NotifyDevelopPoint::class, ['--channel' => 'engineerDevPoint'])->weekdays()->dailyAt('09:00');
+        $schedule->command(NotifyDevelopPoint::class, ['--channel' => 'engineerDevPoint'])->weekdays()->dailyAt('15:00');
+        $schedule->command(NotifyDevelopPoint::class, ['--channel' => 'engineerDevPoint'])->weekdays()->dailyAt('21:00');
     }
 
     /**
