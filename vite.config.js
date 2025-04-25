@@ -16,13 +16,9 @@ export default defineConfig({
         },
     },
     server: {
-        https: true,
-        host: "0.0.0.0",
+        host: "localhost",
         hmr: {
             host: "localhost",
         },
-    },
-    build: {
-        base: "https://slack-api-client.fly.dev/",
     },
 });
