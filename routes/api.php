@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Webhook\NotionController;
+use App\Http\Controllers\MembersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,14 +15,10 @@ use App\Http\Controllers\Webhook\NotionController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-Route::prefix('/webhook')->group(function () {
-    Route::prefix('/notion')->group(function () {
-        Route::prefix('/roadmap')->group(function () {
-            Route::post('/created', [NotionController::class, 'roadmapCreated'])->name('webhook.notion.roadmap.created');
-        });
+Route::middleware('auth:sanctum')->group(function () {
+    Route::prefix('members')->group(function () {
+        Route::get('/', [MembersController::class, 'index']);
+        Route::post('/', [MembersController::class, 'create']);
+        Route::put('/{id}', [MembersController::class, 'update']);
     });
 });
