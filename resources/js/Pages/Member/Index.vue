@@ -245,9 +245,7 @@ const removeMember = async (id: Member["id"]) => {
     if (!confirm("本当に削除しますか？")) return;
 
     const response = await axios.delete(`/api/members/${id}`);
-    if (response.status === 200) {
-        members.value = members.value.filter((member) => member.id !== id);
-    }
+    fetchMembers();
     editingId.value = null;
     dialog.value = false;
 };

@@ -43,7 +43,7 @@ class MembersController extends Controller
 
     public function update(Request $request, string $id)
     {
-        $member = Member::where('notion_id', $id)
+        Member::where('notion_id', $id)
             ->update([
                 'name' => $request->input('name'),
                 'image_url' => $request->input('imageUrl'),
@@ -55,7 +55,6 @@ class MembersController extends Controller
 
     public function delete(string $id): void
     {
-        $member = Member::where('notion_id', $id)->firstOrFail();
-        $member->delete();
+        Member::where('notion_id', $id)->delete();
     }
 }
