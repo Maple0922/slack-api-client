@@ -23,7 +23,7 @@ Route::get('/', function () {
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
-});
+})->middleware('auth.basic');
 
 Route::get('/member', function () {
     return Inertia::render('Member/Index');
