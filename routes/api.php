@@ -27,3 +27,7 @@ Route::middleware('api')->group(function () {
         Route::get('/', [TeamsController::class, 'index']);
     });
 });
+
+Route::get('health', function () {
+    return response()->json(['status' => 'ok']);
+})->name('health');
