@@ -59,8 +59,21 @@
                             color="gray-500"
                         />
                     </template>
-                    <template v-slot:item.imageUrl="{ value }">
-                        <v-avatar v-if="value" size="40" :image="value" />
+                    <template v-slot:item.imageUrl="{ value, item }">
+                        <v-tooltip :disabled="item.kpis.length === 0">
+                            <template #activator="{ props }">
+                                <v-avatar
+                                    v-bind="props"
+                                    size="40"
+                                    :image="value"
+                                />
+                            </template>
+                            <template #default>
+                                <p v-for="kpi in item.kpis" :key="kpi.id">
+                                    {{ kpi.content }}
+                                </p>
+                            </template>
+                        </v-tooltip>
                     </template>
                     <template v-slot:item.isValid="{ item }">
                         <v-switch
@@ -133,6 +146,43 @@
                                     label="アイコンURL"
                                 />
                             </v-col>
+                            <v-col cols="12">
+                                <div
+                                    v-for="(kpi, index) in record.kpis"
+                                    :key="kpi.id"
+                                    class="mb-"
+                                >
+                                    <v-row
+                                        align="center"
+                                        justify="space-between"
+                                    >
+                                        <v-col cols="9">
+                                            <v-textarea
+                                                v-model="kpi.content"
+                                                label="KPI"
+                                                auto-grow
+                                                :rows="1"
+                                                hide-details
+                                            />
+                                        </v-col>
+                                        <v-col
+                                            cols="3"
+                                            class="d-flex align-center justify-between"
+                                        >
+                                            <v-btn
+                                                icon="mdi-delete"
+                                                size="small"
+                                                @click="removeKpi(index)"
+                                            />
+                                            <v-btn
+                                                icon="mdi-plus"
+                                                size="small"
+                                                @click="addKpi"
+                                            />
+                                        </v-col>
+                                    </v-row>
+                                </div>
+                            </v-col>
                         </v-row>
                     </template>
                     <v-divider />
@@ -168,6 +218,12 @@ const DEFAULT_RECORD = {
     },
     imageUrl: "",
     targetPoint: 25,
+    kpis: [
+        {
+            id: 0,
+            content: "",
+        },
+    ],
     isValid: true,
 } as Member;
 
@@ -233,6 +289,7 @@ const editMember = (id: Member["id"]) => {
             id: found.team.id,
             name: found.team.name,
         },
+        kpis: found.kpis.length ? found.kpis : DEFAULT_RECORD.kpis,
         imageUrl: found.imageUrl,
         targetPoint: found.targetPoint,
         isValid: found.isValid,
@@ -269,6 +326,17 @@ const saveMember = () => {
         .catch((error) => {
             console.error("Error saving member:", error);
         });
+};
+
+const addKpi = () => {
+    record.value.kpis.push({
+        id: Date.now() + Math.random(),
+        content: "",
+    });
+};
+const removeKpi = (index) => {
+    if (record.value.kpis.length <= 1) return;
+    record.value.kpis.splice(index, 1);
 };
 
 const toggleValid = async (id: Member["id"]) => {

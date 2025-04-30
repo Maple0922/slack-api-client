@@ -29,4 +29,9 @@ class Member extends Model
     {
         return $this->belongsTo(Team::class);
     }
+
+    public function kpis()
+    {
+        return $this->hasMany(Kpi::class, 'member_notion_id', 'notion_id');
+    }
 }
