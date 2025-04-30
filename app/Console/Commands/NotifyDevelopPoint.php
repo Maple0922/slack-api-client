@@ -66,9 +66,9 @@ class NotifyDevelopPoint extends Command
         ];
 
         // Backlog数値管理から、当日を含めた次の火曜日のページIDを取得
-        $nextTuesday = Carbon::now()->subHours(36)->next(Carbon::TUESDAY)->format('Y/m/d');
+        $nextTuesday = Carbon::now()->subHours(36)->next(Carbon::TUESDAY);
         $parentPayload = config('notion.payload.parent');
-        $parentPayload['filter']['rich_text']['equals'] = $nextTuesday;
+        $parentPayload['filter']['rich_text']['equals'] = $nextTuesday->format('Y/m/d');
         $parentResponse = Http::withHeaders($headers)->post($parentEndPoint, $parentPayload);
         $parentPageId = $parentResponse['results'][0]['id'];
 
@@ -96,7 +96,10 @@ class NotifyDevelopPoint extends Command
             $startCursor = $backlogResponse['next_cursor'] ?? null;
         }
 
-        $members = $this->member->where('is_valid', 1)->get();
+        $members = $this->member
+            ->with('offDates')
+            ->where('is_valid', 1)
+            ->get();
 
         $tasks = $allResults
             ->map(fn($result) => [
@@ -107,18 +110,43 @@ class NotifyDevelopPoint extends Command
             ])
             ->filter(fn($task) => $task['user']);
 
-        $targetPoint = $members->sum('target_point');
+        $targetPoint = $members
+            ->map(callback: function ($member) use ($nextTuesday) {
+                $offDates = $member->offDates->pluck('date');
+                $businessDayCount = collect([0, 1, 4, 5, 6])
+                    ->reject(fn($day) => $offDates->contains(
+                        $nextTuesday
+                            ->copy()
+                            ->subDays($day)
+                            ->format('Y-m-d')
+                    ))
+                    ->count();
+
+                return $member->target_point * $businessDayCount / 5;
+            })
+            ->sum();
         $totalPoint = $tasks->sum(callback: 'point');
         $donePoint = $tasks->filter(callback: fn($task) => $task['isDone'])->sum('point');
 
         $memberTasks = $tasks
             ->groupBy(fn($task) => $task['user']['notion_id'])
-            ->map(function ($tasks) {
+            ->map(function ($tasks) use ($nextTuesday) {
                 $user = $tasks[0]['user'];
+                $offDates = $user->offDates->pluck('date');
+                $businessDayCount = collect([0, 1, 4, 5, 6])
+                    ->reject(fn($day) => $offDates->contains(
+                        $nextTuesday
+                            ->copy()
+                            ->subDays($day)
+                            ->format('Y-m-d')
+                    ))
+                    ->count();
+                $targetPoint = $user->target_point * $businessDayCount / 5;
+
                 return [
                     'name' => $user->name,
                     'imageUrl' => $user->image_url,
-                    'targetPoint' => $user->target_point,
+                    'targetPoint' => $targetPoint,
                     'totalPoint' => $tasks->sum('point'),
                     'donePoint' => $tasks->filter(fn($task) => $task['isDone'])->sum('point')
                 ];

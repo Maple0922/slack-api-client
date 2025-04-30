@@ -34,4 +34,9 @@ class Member extends Model
     {
         return $this->hasMany(Kpi::class, 'member_notion_id', 'notion_id');
     }
+
+    public function offDates()
+    {
+        return $this->hasMany(OffDate::class, 'member_notion_id', 'notion_id');
+    }
 }

@@ -10,7 +10,7 @@ class MembersController extends Controller
 {
     public function index()
     {
-        $members = Member::with('team')
+        $members = Member::with('team', 'kpis')
             ->get()
             ->map(fn($member) => [
                 'id' => $member->notion_id,
