@@ -137,7 +137,6 @@
                                     label="チーム"
                                     :menu-props="{ maxHeight: '400' }"
                                     return-object
-                                    single-line
                                 />
                             </v-col>
                             <v-col cols="12" md="12">
@@ -204,8 +203,9 @@
 <script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
-import { onMounted, ref, shallowRef, computed } from "vue";
+import { onMounted, ref, shallowRef, computed, reactive } from "vue";
 import axios from "axios";
+import { deepCopy } from "@/utils/deepCopy";
 
 import { Member, Team } from "./types";
 
@@ -228,7 +228,7 @@ const DEFAULT_RECORD = {
 } as Member;
 
 const members = ref<Member[]>([]);
-const record = ref<Member>(DEFAULT_RECORD);
+const record = reactive<Member>({ ...DEFAULT_RECORD });
 const dialog = shallowRef(false);
 const isEditing = shallowRef(false);
 
@@ -269,7 +269,8 @@ onMounted(() => {
 
 const addMember = () => {
     isEditing.value = false;
-    record.value = DEFAULT_RECORD;
+
+    Object.assign(record, deepCopy(DEFAULT_RECORD));
     dialog.value = true;
 };
 
@@ -282,18 +283,19 @@ const editMember = (id: Member["id"]) => {
     if (!found) return;
 
     editingId.value = id;
-    record.value = {
+
+    Object.assign(record, {
         id: found.id,
         name: found.name,
         team: {
             id: found.team.id,
             name: found.team.name,
         },
-        kpis: found.kpis.length ? found.kpis : DEFAULT_RECORD.kpis,
+        kpis: found.kpis.length ? found.kpis : deepCopy(DEFAULT_RECORD).kpis,
         imageUrl: found.imageUrl,
         targetPoint: found.targetPoint,
         isValid: found.isValid,
-    };
+    });
 
     dialog.value = true;
 };
@@ -301,7 +303,7 @@ const editMember = (id: Member["id"]) => {
 const removeMember = async (id: Member["id"]) => {
     if (!confirm("本当に削除しますか？")) return;
 
-    const response = await axios.delete(`/api/members/${id}`);
+    await axios.delete(`/api/members/${id}`);
     fetchMembers();
     editingId.value = null;
     dialog.value = false;
@@ -318,7 +320,7 @@ const saveMember = () => {
         ? `/api/members/${editingId.value}`
         : "/api/members";
 
-    axios[method](url, record.value)
+    axios[method](url, record)
         .then(() => {
             fetchMembers();
             dialog.value = false;
@@ -329,21 +331,24 @@ const saveMember = () => {
 };
 
 const addKpi = () => {
-    record.value.kpis.push({
+    record.kpis.push({
         id: Date.now() + Math.random(),
         content: "",
     });
 };
 const removeKpi = (index) => {
-    if (record.value.kpis.length <= 1) return;
-    record.value.kpis.splice(index, 1);
+    if (record.kpis.length <= 1) return;
+    record.kpis.splice(index, 1);
 };
 
 const toggleValid = async (id: Member["id"]) => {
     isEditing.value = true;
     editingId.value = id;
-    record.value = members.value.find((member) => member.id === id) as Member;
-    record.value.isValid = !record.value.isValid;
+    Object.assign(
+        record,
+        members.value.find((member) => member.id === id) as Member,
+    );
+    record.isValid = !record.isValid;
     saveMember();
 };
 
