@@ -8,7 +8,7 @@ VALUES
     (
         'Futo Nakajima',
         'futo.nakajima@wizleap.co.jp',
-        '$2y$10$l4jN.UbXs.C2Ff64TNq9sOQTnZGHgFIAt6gK36CqIu4JwTS5dqnHK',
+        '$2y$10$l4jN.UbXs.C2Ff64TNq9sOQTnZGHgFIAt6gK36CqIu4JwTS5dqnHK'
     );
 
 
@@ -37,89 +37,87 @@ VALUES
         'https://i.imgur.com/3Rx3uBg.png',
         40,
         1
+    ),
+    (
+        'ea7d4fe6-ff62-4673-ae68-c6be6606cc9c',
+        'Issei Hayashi',
+        2,
+        'https://i.imgur.com/oQFsqwz.png',
+        20,
+        1
+    ),
+    (
+        'e1f0d9f3-e08e-4b75-a617-05fbbd385b42',
+        'Futo Nakajima',
+        1,
+        'https://i.imgur.com/YM3dAve.jpeg',
+        20,
+        1
+    ),
+    (
+        '1dc456a2-9f6c-4d03-b498-a84526440ba1',
+        'Takuma Kawazu',
+        1,
+        'https://i.imgur.com/2h0VYss.jpeg',
+        30,
+        1
+    ),
+    (
+        'f34d832f-0bd2-4fbc-9b28-143b0a6a4e53',
+        'Kengo Kitaku',
+        NULL,
+        'https://i.imgur.com/fJbKnfI.png',
+        0,
+        '0'
+    ),
+    (
+        '112d872b-594c-81ca-b227-000203f0a8cb',
+        'Kazuya Matsumoto',
+        1,
+        'https://i.imgur.com/OiYwaIN.png',
+        30,
+        1
+    ),
+    (
+        'a15a19c0-3034-4f2d-98f3-6ff195f7a4da',
+        'Kentaro Tada',
+        2,
+        'https://i.imgur.com/bA1ibze.png',
+        30,
+        1
+    ),
+    (
+        '5301f1c9-08d0-4549-830f-fc732d830ab5',
+        'Tatsunori Ishikawa',
+        3,
+        'https://i.imgur.com/JsGSB3v.jpeg',
+        0,
+        '0'
+    ),
+    (
+        '0d8b1c19-4d5c-4b2d-b38e-60a3e87d7439',
+        'Shota Deyama',
+        2,
+        'https://i.imgur.com/g6e8uQv.jpeg',
+        35,
+        1
+    ),
+    (
+        '173d872b-594c-8156-a5dd-00023a79c0c5',
+        'Ryo Numoto',
+        1,
+        'https://i.imgur.com/C7U6Ohb.png',
+        30,
+        1
+    ),
+    (
+        '1b2d872b-594c-8126-9aea-000261d33213',
+        'Sawato Kawabe',
+        2,
+        'https://i.imgur.com/ReAc4VJ.png',
+        30,
+        1
     );
-
-
-(
-    'ea7d4fe6-ff62-4673-ae68-c6be6606cc9c',
-    'Issei Hayashi',
-    2,
-    'https://i.imgur.com/oQFsqwz.png',
-    20,
-    1
-),
-(
-    'e1f0d9f3-e08e-4b75-a617-05fbbd385b42',
-    'Futo Nakajima',
-    1,
-    'https://i.imgur.com/YM3dAve.jpeg',
-    20,
-    1
-),
-(
-    '1dc456a2-9f6c-4d03-b498-a84526440ba1',
-    'Takuma Kawazu',
-    1,
-    'https://i.imgur.com/2h0VYss.jpeg',
-    35,
-    1
-),
-(
-    'f34d832f-0bd2-4fbc-9b28-143b0a6a4e53',
-    'Kengo Kitaku',
-    NULL,
-    'https://i.imgur.com/fJbKnfI.png',
-    0,
-    '0'
-),
-(
-    '112d872b-594c-81ca-b227-000203f0a8cb',
-    'Kazuya Matsumoto',
-    1,
-    'https://i.imgur.com/OiYwaIN.png',
-    30,
-    1
-),
-(
-    'a15a19c0-3034-4f2d-98f3-6ff195f7a4da',
-    'Kentaro Tada',
-    2,
-    'https://i.imgur.com/bA1ibze.png',
-    30,
-    1
-),
-(
-    '5301f1c9-08d0-4549-830f-fc732d830ab5',
-    'Tatsunori Ishikawa',
-    3,
-    'https://i.imgur.com/JsGSB3v.jpeg',
-    0,
-    '0'
-),
-(
-    '0d8b1c19-4d5c-4b2d-b38e-60a3e87d7439',
-    'Shota Deyama',
-    2,
-    'https://i.imgur.com/g6e8uQv.jpeg',
-    35,
-    1
-),
-(
-    '173d872b-594c-8156-a5dd-00023a79c0c5',
-    'Ryo Numoto',
-    1,
-    'https://i.imgur.com/C7U6Ohb.png',
-    30,
-    1
-),
-(
-    '1b2d872b-594c-8126-9aea-000261d33213',
-    'Sawato Kawabe',
-    2,
-    'https://i.imgur.com/ReAc4VJ.png',
-    30,
-    1
-);
 
 
 INSERT INTO
