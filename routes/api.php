@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MembersController;
 use App\Http\Controllers\WorkingDaysController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\TeamsController;
 
 /*
@@ -30,6 +31,10 @@ Route::middleware('api')->group(function () {
     });
     Route::prefix('teams')->group(function () {
         Route::get('/', [TeamsController::class, 'index']);
+    });
+    Route::prefix('notification')->group(function () {
+        Route::post('/engineer_dev_point', [NotificationController::class, 'engineerDevPoint']);
+        Route::post('/engineer_roadmap', [NotificationController::class, 'engineerRoadmap']);
     });
 });
 
