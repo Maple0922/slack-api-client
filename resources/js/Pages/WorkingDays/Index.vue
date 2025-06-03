@@ -133,7 +133,7 @@ import { deepCopy } from "@/utils/deepCopy";
 import { WorkingDay } from "./types";
 import { Member } from "../Member/types";
 
-const month = ref(new Date().getMonth() + 1);
+const month = ref(new Date().toISOString().slice(0, 7));
 const workingDays = ref<WorkingDay[]>([]);
 const members = ref<Member[]>([]);
 
