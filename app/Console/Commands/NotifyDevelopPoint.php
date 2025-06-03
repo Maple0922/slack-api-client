@@ -111,8 +111,8 @@ class NotifyDevelopPoint extends Command
             ->filter(fn($task) => $task['user']);
 
         $targetPoint = $members
-            ->map(callback: function ($member) use ($nextTuesday) {
-                $offDates = $member->offDates->pluck('date');
+            ->map(function ($member) use ($nextTuesday) {
+                $offDates = $member->offDates->pluck('date')->map(fn($date) => $date->format('Y-m-d'));
                 $businessDayCount = collect([0, 1, 4, 5, 6])
                     ->reject(fn($day) => $offDates->contains(
                         $nextTuesday
@@ -125,14 +125,14 @@ class NotifyDevelopPoint extends Command
                 return $member->target_point * $businessDayCount / 5;
             })
             ->sum();
-        $totalPoint = $tasks->sum(callback: 'point');
-        $donePoint = $tasks->filter(callback: fn($task) => $task['isDone'])->sum('point');
+        $totalPoint = $tasks->sum('point');
+        $donePoint = $tasks->filter(fn($task) => $task['isDone'])->sum('point');
 
         $memberTasks = $tasks
             ->groupBy(fn($task) => $task['user']['notion_id'])
             ->map(function ($tasks) use ($nextTuesday) {
                 $user = $tasks[0]['user'];
-                $offDates = $user->offDates->pluck('date');
+                $offDates = $user->offDates->pluck('date')->map(fn($date) => $date->format('Y-m-d'));
                 $businessDayCount = collect([0, 1, 4, 5, 6])
                     ->reject(fn($day) => $offDates->contains(
                         $nextTuesday
