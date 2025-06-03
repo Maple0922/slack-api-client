@@ -14,6 +14,10 @@ class OffDate extends Model
         'date'
     ];
 
+    protected $casts = [
+        'date' => 'date',
+    ];
+
     public function member()
     {
         return $this->belongsTo(Member::class, 'member_notion_id', 'notion_id');

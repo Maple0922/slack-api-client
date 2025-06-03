@@ -37,6 +37,18 @@ const showingNavigationDropdown = ref(false);
                                 >
                                     メンバー
                                 </NavLink>
+                                <NavLink
+                                    :href="route('working_days')"
+                                    :active="route().current('working_days')"
+                                >
+                                    稼働日数
+                                </NavLink>
+                                <NavLink
+                                    :href="route('notification')"
+                                    :active="route().current('notification')"
+                                >
+                                    手動通知
+                                </NavLink>
                             </div>
                         </div>
 

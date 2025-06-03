@@ -25,9 +25,14 @@ Route::get('/', function () {
     ]);
 })->middleware('auth.basic');
 
-Route::get('/member', function () {
-    return Inertia::render('Member/Index');
-})->middleware(['auth', 'verified'])->name('member');
+Route::get('/member', fn() =>
+Inertia::render('Member/Index'))->middleware(['auth', 'verified'])->name('member');
+Route::get('/working_days', fn() =>
+Inertia::render('WorkingDays/Index'))->middleware(['auth', 'verified'])->name('working_days');
+Route::get('/notification', fn() =>
+Inertia::render('Notification/Index'))->middleware(['auth', 'verified'])->name('notification');
+
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

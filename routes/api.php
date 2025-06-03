@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MembersController;
+use App\Http\Controllers\WorkingDaysController;
 use App\Http\Controllers\TeamsController;
 
 /*
@@ -22,6 +22,11 @@ Route::middleware('api')->group(function () {
         Route::post('/', [MembersController::class, 'create']);
         Route::put('/{id}', [MembersController::class, 'update']);
         Route::delete('/{id}', [MembersController::class, 'delete']);
+    });
+    Route::prefix('working_days')->group(function () {
+        Route::get('/{monthOffset}', [WorkingDaysController::class, 'index']);
+        Route::post('/', [WorkingDaysController::class, 'create']);
+        Route::delete('/{date}/{memberId}', [WorkingDaysController::class, 'delete']);
     });
     Route::prefix('teams')->group(function () {
         Route::get('/', [TeamsController::class, 'index']);
