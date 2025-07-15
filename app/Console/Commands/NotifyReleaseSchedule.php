@@ -44,13 +44,14 @@ class NotifyReleaseSchedule extends Command
             })
             ->sortBy('releaseDate')
             ->map(function ($s) {
-                $prefixIcon = $s['status'] === "Planned" ? ":rocket:" : ":white_check_mark:";
+                $prefixIcon = $s['status'] === "🚀 Planned" ? ":rocket:" : ":white_check_mark:";
                 return "{$prefixIcon} {$s['releaseDate']} <@{$s['slackId']}> - <{$s['url']}|{$s['title']}>";
             });
 
         $slackMessage = collect([
             "前後1週間のリリース一覧です。",
             "リリース予定を確認し、担当者はステータス更新や準備を行なってください。",
+            "遅れがある場合はスレッドに理由を記載の上、リリース予定日を更新してください。",
             PHP_EOL,
             "*<https://www.notion.so/wizleap/" . config('notion.api.releaseScheduleDatabaseUrl') . "|🎁リリーススケジュール>*",
             PHP_EOL,

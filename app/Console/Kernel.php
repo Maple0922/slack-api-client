@@ -6,6 +6,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Console\Commands\NotifyDevelopPoint;
 use App\Console\Commands\NotifyEngineerMtgOrder;
+use App\Console\Commands\NotifyReleaseSchedule;
 
 class Kernel extends ConsoleKernel
 {
@@ -24,6 +25,10 @@ class Kernel extends ConsoleKernel
         $schedule->command(NotifyDevelopPoint::class, ['--channel' => 'engineerDevPoint'])->weekdays()->dailyAt('09:00');
         $schedule->command(NotifyDevelopPoint::class, ['--channel' => 'engineerDevPoint'])->weekdays()->dailyAt('15:00');
         $schedule->command(NotifyDevelopPoint::class, ['--channel' => 'engineerDevPoint'])->weekdays()->dailyAt('21:00');
+
+        // リリーススケジュール
+        $schedule->command(NotifyReleaseSchedule::class, ['--channel' => 'engineerRelease'])->weekdays()->dailyAt('10:00');
+        $schedule->command(NotifyReleaseSchedule::class, ['--channel' => 'engineerRelease'])->weekdays()->dailyAt('16:00');
     }
 
     /**
