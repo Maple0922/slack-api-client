@@ -3,17 +3,17 @@
 namespace App\Console\Commands;
 
 use App\Models\Member;
-use Illuminate\Console\Command;
 use App\Utils\NotionDatabase;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Http;
 use App\Utils\SlackNotifier;
+use Carbon\Carbon;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class NotifyReleaseSchedule extends Command
 {
     protected $signature = 'slack:notifyReleaseSchedule {--channel=notifyTest}';
 
-    protected $description = '開発ロードマップの進捗をSlack通知する';
+    protected $description = '開発ロードマップからリリーススケジュールの進捗をSlack通知する';
 
     public function __construct(
         private Member $member
@@ -25,35 +25,42 @@ class NotifyReleaseSchedule extends Command
     {
         $members = Member::select(['notion_id', 'name', 'slack_id'])->get();
 
-        $releaseScheduleDatabase = new NotionDatabase(config('notion.api.releaseScheduleDatabaseUrl'));
+        $roadmapDatabase = new NotionDatabase(config('notion.api.roadmapDatabaseUrl'));
 
-        $releaseSchedules = $releaseScheduleDatabase
+        $releaseSchedules = $roadmapDatabase
             ->setPayload($this->getReleaseSchedulePayload())
             ->get();
 
         $formattedReleaseSchedules = $releaseSchedules
             ->map(function ($releaseSchedule) use ($members) {
                 $userId = $releaseSchedule['properties']['責任者']['people'][0]['id'] ?? null;
+
+                $title = $releaseSchedule['properties']['Name']['title'][0]['plain_text'];
+                // 20文字以上は切って3点
+                $shortTitle = mb_strlen($title) > 30
+                    ? mb_substr($title, 0, 30) . "…"
+                    : $title;
+
                 return [
                     'url' => $releaseSchedule['url'],
-                    'releaseDate' => Carbon::parse($releaseSchedule['properties']['リリース予定日']['date']['start'])->isoFormat('YYYY/MM/DD (ddd)'),
+                    'releaseDate' => Carbon::parse($releaseSchedule['properties']['リリース日']['date']['start'])->isoFormat('YYYY/MM/DD (ddd)'),
                     'slackId' =>  $members->firstWhere('notion_id', $userId)->slack_id ?? "",
-                    'title' => $releaseSchedule['properties']['タイトル']['title'][0]['plain_text'] ?? "タイトルなし",
-                    'status' => $releaseSchedule['properties']['ステータス']['status']['name'],
+                    'title' => $shortTitle ?? "タイトルなし",
+                    'status' => $releaseSchedule['properties']['Status']['select']['name'],
                 ];
             })
             ->sortBy('releaseDate')
             ->map(function ($s) {
-                $prefixIcon = $s['status'] === "🚀 Planned" ? ":rocket:" : ":white_check_mark:";
-                return "{$prefixIcon} {$s['releaseDate']} <@{$s['slackId']}> - **<{$s['url']}|{$s['title']}>**";
+                $prefixIcon = $this->getStatusIcon($s['status']);
+                return "{$s['releaseDate']} [ {$prefixIcon} *{$s['status']}* ] <@{$s['slackId']}> - <{$s['url']}|*{$s['title']}*>";
             });
 
         $slackMessage = collect([
-            "前後1週間のリリース一覧です。",
-            "リリース予定を確認し、担当者はステータス更新や準備を行なってください。",
+            "直近のリリース予定です。",
+            "担当のロードマップを確認し、ステータス更新や準備を行なってください。",
             "遅れがある場合はスレッドに理由を記載の上、リリース予定日を更新してください。",
             PHP_EOL,
-            "*<https://www.notion.so/wizleap/" . config('notion.api.releaseScheduleDatabaseUrl') . "|🎁リリーススケジュール>*",
+            "*<https://www.notion.so/wizleap/" . config('notion.api.roadmapDatabaseUrl') . "|🥳開発ロードマップ>*",
             PHP_EOL,
             $formattedReleaseSchedules->join(PHP_EOL),
         ])->join(PHP_EOL);
@@ -61,7 +68,7 @@ class NotifyReleaseSchedule extends Command
         $slackNotifier = new SlackNotifier(config("slack.webhook.{$this->option('channel')}"));
         $slackNotifier
             ->setMessage($slackMessage)
-            ->setAppName('リリーススケジュール')
+            ->setAppName('開発ロードマップ')
             ->setIconEmoji(':rocket:')
             ->send();
     }
@@ -69,19 +76,19 @@ class NotifyReleaseSchedule extends Command
     private function getReleaseSchedulePayload()
     {
         // リリース予定日 日付 1週間前から1週間後まで
-        $startDate = Carbon::now()->subDays(7)->format('Y-m-d');
-        $endDate = Carbon::now()->addDays(7)->format('Y-m-d');
+        $startDate = Carbon::now()->subDays(3)->format('Y-m-d');
+        $endDate = Carbon::now()->addDays(10)->format('Y-m-d');
         return [
             "filter" => [
                 "and" => [
                     [
-                        "property" => "リリース予定日",
+                        "property" => "リリース日",
                         "date" => [
                             "on_or_after" => $startDate
                         ]
                     ],
                     [
-                        "property" => "リリース予定日",
+                        "property" => "リリース日",
                         "date" => [
                             "on_or_before" => $endDate
                         ]
@@ -89,5 +96,16 @@ class NotifyReleaseSchedule extends Command
                 ],
             ],
         ];
+    }
+
+    private function getStatusIcon($status)
+    {
+        return match ($status) {
+            'リリース済' => ":white_check_mark:",
+            'QA対応中' => ":rocket:",
+            '開発中' => ":construction:",
+            '開発スタンバイ' => ":construction:",
+            default => ":question:",
+        };
     }
 }
