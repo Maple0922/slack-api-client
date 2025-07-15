@@ -45,7 +45,7 @@ class NotifyReleaseSchedule extends Command
             ->sortBy('releaseDate')
             ->map(function ($s) {
                 $prefixIcon = $s['status'] === "🚀 Planned" ? ":rocket:" : ":white_check_mark:";
-                return "{$prefixIcon} {$s['releaseDate']} <@{$s['slackId']}> - <{$s['url']}|{$s['title']}>";
+                return "{$prefixIcon} {$s['releaseDate']} <@{$s['slackId']}> - **<{$s['url']}|{$s['title']}>**";
             });
 
         $slackMessage = collect([
