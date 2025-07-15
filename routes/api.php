@@ -35,6 +35,7 @@ Route::middleware('api')->group(function () {
     Route::prefix('notification')->group(function () {
         Route::post('/engineer_dev_point', [NotificationController::class, 'engineerDevPoint']);
         Route::post('/engineer_roadmap', [NotificationController::class, 'engineerRoadmap']);
+        Route::post('/engineer_release', [NotificationController::class, 'engineerRelease']);
     });
 });
 

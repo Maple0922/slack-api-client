@@ -13,7 +13,8 @@ class MembersController extends Controller
         $members = Member::with('team', 'kpis')
             ->get()
             ->map(fn($member) => [
-                'id' => $member->notion_id,
+                'notionId' => $member->notion_id,
+                'slackId' => $member->slack_id,
                 'name' => $member->name,
                 'imageUrl' => $member->image_url,
                 'team' => [
@@ -37,7 +38,8 @@ class MembersController extends Controller
     public function create(Request $request): Member
     {
         $member = Member::create([
-            'notion_id' => $request->input('id'),
+            'notion_id' => $request->input('notionId'),
+            'slack_id' => $request->input('slackId'),
             'name' => $request->input('name'),
             'team_id' => $request->input('team.id'),
             'image_url' => $request->input('imageUrl'),
@@ -70,6 +72,7 @@ class MembersController extends Controller
 
         Member::where('notion_id', $id)
             ->update([
+                'slack_id' => $request->input('slackId'),
                 'name' => $request->input('name'),
                 'image_url' => $request->input('imageUrl'),
                 'team_id' => $request->input('team.id'),

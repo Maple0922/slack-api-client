@@ -79,7 +79,7 @@
                         <v-switch
                             :modelValue="item.isValid"
                             color="primary"
-                            @change="toggleValid(item.id)"
+                            @change="toggleValid(item.notionId)"
                             hide-label
                             density="comfortable"
                             hide-details
@@ -90,13 +90,13 @@
                             <v-icon
                                 color="medium-emphasis"
                                 icon="mdi-pencil"
-                                @click="editMember(item.id)"
+                                @click="editMember(item.notionId)"
                             />
 
                             <v-icon
                                 color="medium-emphasis"
                                 icon="mdi-delete"
-                                @click="removeMember(item.id)"
+                                @click="removeMember(item.notionId)"
                             />
                         </div>
                     </template>
@@ -108,9 +108,15 @@
                         <v-row>
                             <v-col cols="12">
                                 <v-text-field
-                                    v-model="record.id"
-                                    label="ID"
+                                    v-model="record.notionId"
+                                    label="Notion ID"
                                     :disabled="isEditing"
+                                />
+                            </v-col>
+                            <v-col cols="12">
+                                <v-text-field
+                                    v-model="record.slackId"
+                                    label="Slack ID"
                                 />
                             </v-col>
                             <v-col cols="12" md="6">
@@ -210,7 +216,8 @@ import { deepCopy } from "@/utils/deepCopy";
 import { Member, Team } from "./types";
 
 const DEFAULT_RECORD = {
-    id: "",
+    notionId: "",
+    slackId: "",
     name: "",
     team: {
         id: 0,
@@ -256,7 +263,18 @@ const headers = computed(() => {
     ];
     return visibleId.value
         ? [
-              { title: "ID", key: "id", width: "320px", sortable: true },
+              {
+                  title: "Notion ID",
+                  key: "notionId",
+                  width: "120px",
+                  sortable: true,
+              },
+              {
+                  title: "Slack ID",
+                  key: "slackId",
+                  width: "120px",
+                  sortable: true,
+              },
               ...baseHeaders,
           ]
         : baseHeaders;
@@ -274,18 +292,19 @@ const addMember = () => {
     dialog.value = true;
 };
 
-const editingId = ref<Member["id"] | null>(null);
-const editMember = (id: Member["id"]) => {
+const editingId = ref<Member["notionId"] | null>(null);
+const editMember = (id: Member["notionId"]) => {
     isEditing.value = true;
 
-    const found = members.value.find((member) => member.id === id);
+    const found = members.value.find((member) => member.notionId === id);
 
     if (!found) return;
 
     editingId.value = id;
 
     Object.assign(record, {
-        id: found.id,
+        notionId: found.notionId,
+        slackId: found.slackId,
         name: found.name,
         team: {
             id: found.team.id,
@@ -300,7 +319,7 @@ const editMember = (id: Member["id"]) => {
     dialog.value = true;
 };
 
-const removeMember = async (id: Member["id"]) => {
+const removeMember = async (id: Member["notionId"]) => {
     if (!confirm("本当に削除しますか？")) return;
 
     await axios.delete(`/api/members/${id}`);
@@ -341,12 +360,12 @@ const removeKpi = (index) => {
     record.kpis.splice(index, 1);
 };
 
-const toggleValid = async (id: Member["id"]) => {
+const toggleValid = async (id: Member["notionId"]) => {
     isEditing.value = true;
     editingId.value = id;
     Object.assign(
         record,
-        members.value.find((member) => member.id === id) as Member,
+        members.value.find((member) => member.notionId === id) as Member,
     );
     record.isValid = !record.isValid;
     saveMember();

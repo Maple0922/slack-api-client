@@ -1,5 +1,6 @@
 export interface Member {
-    id: string;
+    notionId: string;
+    slackId: string;
     name: string;
     team: Team;
     imageUrl: string;

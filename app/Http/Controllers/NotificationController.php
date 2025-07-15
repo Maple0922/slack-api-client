@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Team;
-use Illuminate\Console\Command;
 use App\Console\Commands\NotifyDevelopPoint;
 use App\Console\Commands\NotifyRoadmap;
+use App\Console\Commands\NotifyReleaseSchedule;
 use Illuminate\Support\Facades\Artisan;
 
 class NotificationController extends Controller
@@ -22,6 +21,13 @@ class NotificationController extends Controller
     {
         Artisan::call(NotifyRoadmap::class, [
             '--channel' => 'engineerDevPoint'
+        ]);
+    }
+
+    public function engineerRelease()
+    {
+        Artisan::call(NotifyReleaseSchedule::class, [
+            '--channel' => 'engineerRelease'
         ]);
     }
 }

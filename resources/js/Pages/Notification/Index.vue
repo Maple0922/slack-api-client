@@ -80,11 +80,25 @@ const notifications = ref<Notification[]>([
             url: "https://wizleap.slack.com/archives/C07DH9WFLV7",
         },
     },
+    {
+        id: 3,
+        title: "リリーススケジュール通知",
+        path: "engineer_release",
+        channel: {
+            name: "56_engineer_release",
+            url: "https://wizleap.slack.com/archives/C095W83FNKU",
+        },
+    },
 ]);
 
 const sendNotification = async (notification: Notification) => {
     sendingId.value = notification.id;
-    await axios.post(`/api/notification/${notification.path}`);
-    sendingId.value = null;
+    try {
+        await axios.post(`/api/notification/${notification.path}`);
+    } catch (error) {
+        console.error(error);
+    } finally {
+        sendingId.value = null;
+    }
 };
 </script>
