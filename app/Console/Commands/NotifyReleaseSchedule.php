@@ -7,7 +7,6 @@ use App\Utils\NotionDatabase;
 use App\Utils\SlackNotifier;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Log;
 
 class NotifyReleaseSchedule extends Command
 {
