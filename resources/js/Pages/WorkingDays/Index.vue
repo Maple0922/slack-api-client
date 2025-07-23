@@ -37,7 +37,7 @@
                             <th
                                 class="text-center"
                                 v-for="member in validMembers"
-                                :key="member.id"
+                                :key="member.notionId"
                             >
                                 <v-tooltip location="top">
                                     <template #activator="{ props }">
@@ -74,7 +74,7 @@
                             </td>
                             <td
                                 v-for="member in validMembers"
-                                :key="member.id"
+                                :key="member.notionId"
                                 class="text-center"
                             >
                                 <template
@@ -88,7 +88,7 @@
                                     v-else-if="
                                         workingDay.members
                                             .map((member) => member.id)
-                                            .includes(member.id)
+                                            .includes(member.notionId)
                                     "
                                     density="compact"
                                     icon="mdi-check"
@@ -97,7 +97,7 @@
                                     @click="
                                         deleteWorkingDay(
                                             workingDay.date,
-                                            member.id,
+                                            member.notionId,
                                         )
                                     "
                                 />
@@ -110,7 +110,7 @@
                                     @click="
                                         createWorkingDay(
                                             workingDay.date,
-                                            member.id,
+                                            member.notionId,
                                         )
                                     "
                                 />
@@ -126,9 +126,8 @@
 <script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
-import { onMounted, ref, shallowRef, computed, reactive } from "vue";
+import { onMounted, ref, computed } from "vue";
 import axios from "axios";
-import { deepCopy } from "@/utils/deepCopy";
 
 import { WorkingDay } from "./types";
 import { Member } from "../Member/types";
