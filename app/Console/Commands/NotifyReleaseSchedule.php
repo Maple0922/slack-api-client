@@ -45,7 +45,7 @@ class NotifyReleaseSchedule extends Command
                     'releaseDate' => Carbon::parse($releaseSchedule['properties']['リリース日']['date']['start'])->isoFormat('YYYY/MM/DD (ddd)'),
                     'slackId' =>  $members->firstWhere('notion_id', $userId)->slack_id ?? "",
                     'title' => $shortTitle ?? "タイトルなし",
-                    'status' => $releaseSchedule['properties']['Status']['select']['name'],
+                    'status' => $releaseSchedule['properties']['Status']['select']['name'] ?? "不明",
                 ];
             })
             ->sortBy('releaseDate')
