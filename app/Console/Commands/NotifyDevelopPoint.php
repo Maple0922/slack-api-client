@@ -104,7 +104,7 @@ class NotifyDevelopPoint extends Command
         $tasks = $allResults
             ->map(fn($result) => [
                 'title' => $result['properties']['Backlog']['title'][0]['plain_text'] ?? 'タイトルなし',
-                'user' => $members->first(fn($member) => $member->notion_id === $result['properties']['Manager']['people'][0]['id']),
+                'user' => $members->first(fn($member) => $member->notion_id === $result['properties']['Manager']['people'][0]['id']) ?? null,
                 'point' => $result['properties']['Point']['number'],
                 'isDone' => !!$result['properties']['InReview Date']['relation']
             ])
