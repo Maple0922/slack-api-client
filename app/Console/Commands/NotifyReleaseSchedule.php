@@ -98,6 +98,12 @@ class NotifyReleaseSchedule extends Command
                         "date" => [
                             "on_or_before" => $endDate
                         ]
+                    ],
+                    [
+                        "property" => "Product",
+                        "select" => [
+                            "does_not_contain" => "セキュリティ"
+                        ]
                     ]
                 ],
             ],
