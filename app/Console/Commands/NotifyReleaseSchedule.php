@@ -36,28 +36,35 @@ class NotifyReleaseSchedule extends Command
 
                 $title = $releaseSchedule['properties']['Name']['title'][0]['plain_text'];
                 // 20文字以上は切って3点
-                $shortTitle = mb_strlen($title) > 30
+                $shortTitle = (mb_strlen($title) > 30
                     ? mb_substr($title, 0, 30) . "…"
-                    : $title;
+                    : $title) ?? "タイトルなし";
+
+                $status = $releaseSchedule['properties']['Status']['select']['name'] ?? "不明";
+
+                $releaseDate = Carbon::parse($releaseSchedule['properties']['リリース日']['date']['start']);
+
+                $isDelayed = $releaseDate->isPast() && $status !== "リリース済";
 
                 return [
                     'url' => $releaseSchedule['url'],
-                    'releaseDate' => Carbon::parse($releaseSchedule['properties']['リリース日']['date']['start'])->isoFormat('YYYY/MM/DD (ddd)'),
+                    'releaseDate' => $releaseDate->isoFormat('YYYY/MM/DD (ddd)'),
                     'slackId' =>  $members->firstWhere('notion_id', $userId)->slack_id ?? "",
-                    'title' => $shortTitle ?? "タイトルなし",
-                    'status' => $releaseSchedule['properties']['Status']['select']['name'] ?? "不明",
+                    'title' => $shortTitle,
+                    'status' => $status,
+                    'delayMark' => $isDelayed ? "⚠️" : "",
                 ];
             })
             ->sortBy('releaseDate')
             ->map(function ($s) {
                 $prefixIcon = $this->getStatusIcon($s['status']);
-                return "{$s['releaseDate']} [ {$prefixIcon} *{$s['status']}* ] <@{$s['slackId']}> - <{$s['url']}|*{$s['title']}*>";
+                return "{$s['releaseDate']} [ {$prefixIcon} *{$s['status']}* ] <@{$s['slackId']}> - {$s['delayMark']}<{$s['url']}|*{$s['title']}*>";
             });
 
         $slackMessage = collect([
             "直近のリリース予定です。",
             "担当のロードマップを確認し、ステータス更新や準備を行なってください。",
-            "遅れがある場合はスレッドに理由を記載の上、リリース予定日を更新してください。",
+            "⚠️マークがついている場合はスレッドに理由を記載の上、リリース予定日を更新してください。",
             PHP_EOL,
             "*<https://www.notion.so/wizleap/" . config('notion.api.roadmapDatabaseUrl') . "|🥳開発ロードマップ>*",
             PHP_EOL,

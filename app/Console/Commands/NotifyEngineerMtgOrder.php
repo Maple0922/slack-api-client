@@ -24,7 +24,10 @@ class NotifyEngineerMtgOrder extends Command
     {
         $members = Member::query()
             ->select('name')
-            ->whereNot('name', 'Kengo Kitaku')
+            ->whereNotIn('name', [
+                'Kengo Kitaku',
+                'Issei Hayashi'
+            ])
             ->get()
             ->shuffle()
             ->pluck('name')
