@@ -102,7 +102,7 @@ class NotifyReleaseSchedule extends Command
                     [
                         "property" => "Product",
                         "select" => [
-                            "does_not_contain" => "セキュリティ"
+                            "does_not_equal" => "セキュリティ"
                         ]
                     ]
                 ],
