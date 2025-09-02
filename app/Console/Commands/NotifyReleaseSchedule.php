@@ -86,25 +86,45 @@ class NotifyReleaseSchedule extends Command
         $endDate = Carbon::now()->addDays(10)->format('Y-m-d');
         return [
             "filter" => [
-                "and" => [
+                "or" => [
                     [
-                        "property" => "リリース日",
-                        "date" => [
-                            "on_or_after" => $startDate
-                        ]
+                        "and" => [
+                            [
+                                "property" => "リリース日",
+                                "date" => [
+                                    "on_or_after" => $startDate
+                                ]
+                            ],
+                            [
+                                "property" => "リリース日",
+                                "date" => [
+                                    "on_or_before" => $endDate
+                                ]
+                            ],
+                            [
+                                "property" => "Product",
+                                "select" => [
+                                    "does_not_equal" => "セキュリティ"
+                                ]
+                            ]
+                        ],
                     ],
                     [
-                        "property" => "リリース日",
-                        "date" => [
-                            "on_or_before" => $endDate
-                        ]
+                        "and" => [
+                            [
+                                "property" => "リリース日",
+                                "date" => [
+                                    "on_or_before" => $endDate
+                                ]
+                            ],
+                            [
+                                "property" => "Status",
+                                "select" => [
+                                    "does_not_equal" => "リリース済"
+                                ]
+                            ]
+                        ],
                     ],
-                    [
-                        "property" => "Product",
-                        "select" => [
-                            "does_not_equal" => "セキュリティ"
-                        ]
-                    ]
                 ],
             ],
         ];
