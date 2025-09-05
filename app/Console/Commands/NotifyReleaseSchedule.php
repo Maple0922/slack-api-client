@@ -122,6 +122,12 @@ class NotifyReleaseSchedule extends Command
                                 "select" => [
                                     "does_not_equal" => "リリース済"
                                 ]
+                            ],
+                            [
+                                "property" => "Product",
+                                "select" => [
+                                    "does_not_equal" => "セキュリティ"
+                                ]
                             ]
                         ],
                     ],
