@@ -18,18 +18,17 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // エンジニア週次の順番
+        // エンジニア週次の順番 (水15:00)
         $schedule->command(NotifyEngineerMtgOrder::class, ['--channel' => 'engineerGeneral'])->weeklyOn(3, '15:00');
 
-        // 開発ポイント進捗
-        $schedule->command(NotifyDevelopPoint::class, ['--channel' => 'engineerDevPoint'])->weekdays()->dailyAt('08:45');
-        $schedule->command(NotifyDevelopPoint::class, ['--channel' => 'engineerDevPoint'])->weekdays()->dailyAt('15:00');
-        $schedule->command(NotifyDevelopPoint::class, ['--channel' => 'engineerDevPoint'])->weekdays()->dailyAt('21:00');
+        // 開発ポイント進捗 (金15:00, 火15:00, 水8:30)
+        $schedule->command(NotifyDevelopPoint::class, ['--channel' => 'engineerDevPoint'])->weeklyOn(5, '15:00');
+        $schedule->command(NotifyDevelopPoint::class, ['--channel' => 'engineerDevPoint'])->weeklyOn(2, '15:00');
+        $schedule->command(NotifyDevelopPoint::class, ['--channel' => 'engineerDevPoint'])->weeklyOn(3, '8:30');
 
-        // リリーススケジュール
+        // リリーススケジュール　(平日9:00, 火18:00)
         $schedule->command(NotifyReleaseSchedule::class, ['--channel' => 'engineerRelease'])->weekdays()->dailyAt('9:00');
-        $schedule->command(NotifyReleaseSchedule::class, ['--channel' => 'engineerRelease'])->weekdays()->dailyAt('13:00');
-        $schedule->command(NotifyReleaseSchedule::class, ['--channel' => 'engineerRelease'])->weekdays()->dailyAt('20:00');
+        $schedule->command(NotifyReleaseSchedule::class, ['--channel' => 'engineerRelease'])->weeklyOn(2, '18:00');
     }
 
     /**
