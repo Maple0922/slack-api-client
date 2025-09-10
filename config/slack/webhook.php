@@ -5,5 +5,6 @@ return [
     'engineerGeneral' => env('SLACK_ENGINEER_GENERAL_WEBHOOK_URL'),
     'engineerRoadmap' => env('SLACK_ENGINEER_ROADMAP_WEBHOOK_URL'),
     'engineerRelease' => env('SLACK_ENGINEER_RELEASE_WEBHOOK_URL'),
-    'notifyTest' => env('SLACK_NOTIFY_TEST_WEBHOOK_URL')
+    'notifyTest' => env('SLACK_NOTIFY_TEST_WEBHOOK_URL'),
+    'timesNakajima' => env('SLACK_TIMES_NAKAJIMA_WEBHOOK_URL'),
 ];

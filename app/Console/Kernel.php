@@ -2,11 +2,14 @@
 
 namespace App\Console;
 
+use App\Console\Commands\NotifySimpleDevelopmentPoint;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Console\Commands\NotifyDevelopPoint;
 use App\Console\Commands\NotifyEngineerMtgOrder;
 use App\Console\Commands\NotifyReleaseSchedule;
+use App\Console\Commands\NotifySimpleReleaseSchedule;
+
 
 class Kernel extends ConsoleKernel
 {
@@ -29,6 +32,10 @@ class Kernel extends ConsoleKernel
         // リリーススケジュール　(平日9:00, 火18:00)
         $schedule->command(NotifyReleaseSchedule::class, ['--channel' => 'engineerRelease'])->weekdays()->dailyAt('9:00');
         $schedule->command(NotifyReleaseSchedule::class, ['--channel' => 'engineerRelease'])->weeklyOn(2, '18:00');
+
+        // 個人用
+        $schedule->command(NotifySimpleDevelopmentPoint::class, ['--channel' => 'timesNakajima'])->weekdays()->dailyAt('9:00');
+        $schedule->command(NotifySimpleReleaseSchedule::class, ['--channel' => 'timesNakajima'])->weekdays()->dailyAt('9:01');
     }
 
     /**

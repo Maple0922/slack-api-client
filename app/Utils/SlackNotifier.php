@@ -12,7 +12,7 @@ class SlackNotifier extends Command
     public string $appName = 'Slack Bot';
     public string $message = 'メッセージです';
     public string $iconEmoji = ':slack:';
-
+    public array $blocks = [];
     public function __construct(string $webhookUrl)
     {
         $this->webhookUrl = $webhookUrl;
@@ -36,12 +36,19 @@ class SlackNotifier extends Command
         return $this;
     }
 
+    public function setBlock(array $blocks)
+    {
+        $this->blocks = $blocks;
+        return $this;
+    }
+
     public function send(): Response
     {
         $data = [
             'text' => $this->message,
             'username' => $this->appName,
             'icon_emoji' => $this->iconEmoji,
+            'blocks' => $this->blocks,
         ];
 
         $response = Http::post($this->webhookUrl, $data);

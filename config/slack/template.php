@@ -48,6 +48,32 @@ return [
             ],
         ],
 
+        'simpleMain' => [
+            'username' => '開発ポイント進捗',
+            'icon_emoji' => ':cat-oiiaoiia:',
+            'text' => '開発ポイント達成進捗',
+            "blocks" => [
+                [
+
+                    "type" => "header",
+                    "text" => [
+                        "type" => "plain_text",
+                        "text" => "%targetRate% (%donePoint%/%targetPoint%)"
+                    ],
+                ],
+            ]
+        ],
+
+        'simpleMember' => [
+            [
+                "type" => "section",
+                "text" => [
+                    "type" => "mrkdwn",
+                    "text" => "%doneRateStars% :bust_in_silhouette: *%memberName%* ................ _ *%targetRate%* _ _(%donePoint%/%targetPoint%)_ "
+                ],
+            ]
+        ],
+
         'failed' => [
             'username' => '開発ポイント',
             'icon_emoji' => ':chipichapa:',
@@ -57,6 +83,47 @@ return [
                     "text" => [
                         "type" => "mrkdwn",
                         "text" => "開発ポイントのSlack通知に失敗しました"
+                    ],
+                ]
+            ]
+        ]
+    ],
+
+    'releaseSchedule' => [
+        'simpleMain' => [
+            'username' => '開発ロードマップ進捗',
+            'icon_emoji' => ':rocket:',
+            'text' => '開発ロードマップ進捗',
+            "blocks" => [
+                [
+                    "type" => "header",
+                    "text" => [
+                        "type" => "plain_text",
+                        "text" => "本日のリリース：%todayReleaseCount%件"
+                    ],
+                ],
+            ]
+        ],
+
+        'simpleItem' => [
+            [
+                "type" => "section",
+                "text" => [
+                    "type" => "mrkdwn",
+                    "text" => "%releaseDate% %userPrefixIcon% %userName% ......... %statusIcon% <%url%|%title%>"
+                ],
+            ]
+        ],
+
+        'failed' => [
+            'username' => '開発ロードマップ進捗',
+            'icon_emoji' => ':rocket:',
+            'blocks' => [
+                [
+                    "type" => "section",
+                    "text" => [
+                        "type" => "mrkdwn",
+                        "text" => "リリーススケジュールのSlack通知に失敗しました"
                     ],
                 ]
             ]
