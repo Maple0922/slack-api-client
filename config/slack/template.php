@@ -58,7 +58,7 @@ return [
                     "type" => "header",
                     "text" => [
                         "type" => "plain_text",
-                        "text" => "%targetRate% (%donePoint%/%targetPoint%)"
+                        "text" => "達成率：%targetRate% (%donePoint%/%targetPoint%)"
                     ],
                 ],
             ]
@@ -92,7 +92,7 @@ return [
     'releaseSchedule' => [
         'simpleMain' => [
             'username' => '開発ロードマップ進捗',
-            'icon_emoji' => ':rocket:',
+            'icon_emoji' => ':cat-oiiaoiia:',
             'text' => '開発ロードマップ進捗',
             "blocks" => [
                 [
