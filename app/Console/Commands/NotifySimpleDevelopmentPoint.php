@@ -12,8 +12,6 @@ class NotifySimpleDevelopmentPoint extends Command
 {
     protected $signature = 'slack:notifySimpleDevelopmentPoint {--channel=notifyTest}';
 
-
-
     protected $description = 'シンプルな開発ポイントをSlack通知する';
 
     public function __construct(
