@@ -42,7 +42,9 @@ class NotifySimpleDevelopmentPoint extends Command
 
         // Slackに通知
         $headers = ['Content-type' => 'application/json'];
-        $url = config("slack.webhook.{$this->option('channel')}");
+        $url = collect(config('slack.channels'))
+            ->first(fn($channel) =>
+            $channel['key'] === $this->option('channel'))['webhookUrl'];
         $response = Http::withHeaders($headers)->post($url, $mainPayloads);
 
         // 失敗時に再度通知

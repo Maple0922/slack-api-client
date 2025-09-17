@@ -1,9 +1,12 @@
 export interface Notification {
-    id: number;
     title: string;
-    path: string;
-    channel: {
-        name: string;
-        url: string;
-    };
+    key: string;
+    channel: string;
+}
+
+export interface Channel {
+    key: string;
+    name: string;
+    link: string;
+    webhookUrl: string;
 }

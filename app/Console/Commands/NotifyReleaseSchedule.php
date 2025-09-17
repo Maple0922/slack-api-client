@@ -71,7 +71,10 @@ class NotifyReleaseSchedule extends Command
             $formattedReleaseSchedules->join(PHP_EOL),
         ])->join(PHP_EOL);
 
-        $slackNotifier = new SlackNotifier(config("slack.webhook.{$this->option('channel')}"));
+        $url = collect(config('slack.channels'))
+            ->first(fn($channel) =>
+            $channel['key'] === $this->option('channel'))['webhookUrl'];
+        $slackNotifier = new SlackNotifier($url);
         $slackNotifier
             ->setMessage($slackMessage)
             ->setAppName('開発ロードマップ')

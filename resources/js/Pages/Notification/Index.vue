@@ -19,30 +19,39 @@
                     <tbody>
                         <tr
                             v-for="notification in notifications"
-                            :key="notification.path"
+                            :key="notification.key"
                         >
                             <td class="text-left">{{ notification.title }}</td>
                             <td class="text-left">
-                                <a
-                                    :href="notification.channel.url"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
+                                <select
+                                    v-model="notification.channel"
+                                    name="channel"
                                 >
-                                    # {{ notification.channel.name }}
-                                </a>
+                                    <option
+                                        v-for="channel in channels"
+                                        :value="channel.key"
+                                    >
+                                        # {{ channel.name }}
+                                    </option>
+                                </select>
                             </td>
 
                             <td class="text-center">
                                 <v-btn
-                                    :loading="sendingId === notification.id"
+                                    :loading="sendingKey === notification.key"
                                     :disabled="
-                                        sendingId &&
-                                        sendingId !== notification.id
+                                        sendingKey &&
+                                        sendingKey !== notification.key
                                     "
                                     density="comfortable"
                                     icon="mdi-send"
                                     color="primary"
-                                    @click="sendNotification(notification)"
+                                    @click="
+                                        sendNotification(
+                                            notification.key,
+                                            notification.channel,
+                                        )
+                                    "
                                 />
                             </td>
                         </tr></tbody
@@ -55,50 +64,77 @@
 <script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import axios from "axios";
-import { Notification } from "./types";
+import { Notification, Channel } from "./types";
 
-const sendingId = ref<number | null>(null);
+const sendingKey = ref<string | null>(null);
 
-const notifications = ref<Notification[]>([
-    {
-        id: 1,
-        title: "開発ポイント進捗通知",
-        path: "engineer_dev_point",
-        channel: {
-            name: "50_engineer_dev_point",
-            url: "https://wizleap.slack.com/archives/C07DH9WFLV7",
-        },
-    },
-    {
-        id: 2,
-        title: "ロードマップ進捗通知",
-        path: "engineer_roadmap",
-        channel: {
-            name: "50_engineer_dev_point",
-            url: "https://wizleap.slack.com/archives/C07DH9WFLV7",
-        },
-    },
-    {
-        id: 3,
-        title: "リリーススケジュール通知",
-        path: "engineer_release",
-        channel: {
-            name: "56_engineer_release",
-            url: "https://wizleap.slack.com/archives/C095W83FNKU",
-        },
-    },
-]);
+const notifications = ref<Notification[]>([]);
+const channels = ref<Channel[]>([]);
 
-const sendNotification = async (notification: Notification) => {
-    sendingId.value = notification.id;
+const fetchNotifications = async () => {
+    const response = await axios.get<Notification[]>("/api/notifications");
+    notifications.value = response.data;
+};
+
+const fetchChannels = async () => {
+    const response = await axios.get<Channel[]>("/api/channels");
+    channels.value = response.data;
+};
+
+const sendNotification = async (key: string, channel: string) => {
+    sendingKey.value = key;
     try {
-        await axios.post(`/api/notification/${notification.path}`);
+        await axios.post(`/api/notifications`, { key, channel });
     } catch (error) {
         console.error(error);
     } finally {
-        sendingId.value = null;
+        sendingKey.value = null;
     }
 };
+
+onMounted(() => {
+    fetchNotifications();
+    fetchChannels();
+});
 </script>
+
+<style scoped lang="scss">
+select {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px;
+    font-size: 14px;
+    color: #333;
+    background-color: #fff;
+
+    &:after {
+        content: "▼";
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    option {
+        width: 100%;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 4px;
+        font-size: 14px;
+        color: #333;
+        background-color: #fff;
+
+        &:hover {
+            background-color: #f0f0f0;
+        }
+        &:checked {
+            background-color: #f0f0f0;
+        }
+        &:focus {
+            background-color: #f0f0f0;
+        }
+    }
+}
+</style>

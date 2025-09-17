@@ -5,29 +5,24 @@ namespace App\Http\Controllers;
 use App\Console\Commands\NotifyDevelopPoint;
 use App\Console\Commands\NotifyRoadmap;
 use App\Console\Commands\NotifyReleaseSchedule;
+use App\Console\Commands\NotifySimpleDevelopmentPoint;
+use App\Console\Commands\NotifySimpleReleaseSchedule;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Http\Request;
 
 class NotificationController extends Controller
 {
-
-    public function engineerDevPoint()
+    public function index()
     {
-        Artisan::call(NotifyDevelopPoint::class, [
-            '--channel' => 'engineerDevPoint'
-        ]);
+        $notifications = config('slack.notifications');
+        return response()->json($notifications);
     }
 
-    public function engineerRoadmap()
+    public function send(Request $request)
     {
-        Artisan::call(NotifyRoadmap::class, [
-            '--channel' => 'engineerDevPoint'
-        ]);
-    }
+        $class = collect(config('slack.notifications'))
+            ->first(fn($notification) => $notification['key'] === $request->key)['class'];
 
-    public function engineerRelease()
-    {
-        Artisan::call(NotifyReleaseSchedule::class, [
-            '--channel' => 'engineerRelease'
-        ]);
+        Artisan::call($class, ['--channel' => $request->channel]);
     }
 }

@@ -43,7 +43,9 @@ class NotifyRoadmap extends Command
         // $payload = json_decode(strtr(json_encode($template), $replace), true);
 
         // $headers = ['Content-type' => 'application/json'];
-        // $url = config("slack.webhook.{$this->option('channel')}");
+        // $url = collect(config('slack.channels'))
+        //  ->first(fn($channel) =>
+        //  $channel['key'] === $this->option('channel'))['webhookUrl'];
 
         // $response = Http::withHeaders($headers)->post($url, $payload);
         // if ($response->status() >= 300) {
