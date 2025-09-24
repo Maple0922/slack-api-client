@@ -50,15 +50,18 @@ class NotifyReleaseSchedule extends Command
                     'url' => $releaseSchedule['url'],
                     'releaseDate' => $releaseDate->isoFormat('YYYY/MM/DD (ddd)'),
                     'slackId' =>  $members->firstWhere('notion_id', $userId)->slack_id ?? "",
+                    'name' => $members->firstWhere('notion_id', $userId)->name ?? "",
                     'title' => $shortTitle,
                     'status' => $status,
+                    'isDelayed' => $isDelayed,
                     'delayMark' => $isDelayed ? "⚠️" : "",
                 ];
             })
             ->sortBy('releaseDate')
             ->map(function ($s) {
                 $prefixIcon = $this->getStatusIcon($s['status']);
-                return "{$s['releaseDate']} [ {$prefixIcon} *{$s['status']}* ] <@{$s['slackId']}> - {$s['delayMark']}<{$s['url']}|*{$s['title']}*>";
+                $name = $s['isDelayed'] ? "<@{$s['slackId']}>" : $s['name'];
+                return "{$s['releaseDate']} [ {$prefixIcon} *{$s['status']}* ] {$name} - {$s['delayMark']}<{$s['url']}|*{$s['title']}*>";
             });
 
         $slackMessage = collect([
