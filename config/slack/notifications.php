@@ -19,12 +19,12 @@ return [
         'channel' => 'engineerRoadmap',
         'class' => NotifyRoadmap::class,
     ],
-    // [
-    //     'title' => 'リリーススケジュール進捗通知',
-    //     'key' => 'engineerRelease',
-    //     'channel' => 'engineerRelease',
-    //     'class' => NotifyReleaseSchedule::class,
-    // ],
+    [
+        'title' => 'リリーススケジュール進捗通知',
+        'key' => 'engineerRelease',
+        'channel' => 'engineerRelease',
+        'class' => NotifyReleaseSchedule::class,
+    ],
     [
         'title' => 'シンプル開発ポイント進捗通知',
         'key' => 'engineerDevPointSimple',
