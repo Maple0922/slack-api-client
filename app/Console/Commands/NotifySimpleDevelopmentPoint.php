@@ -83,7 +83,7 @@ class NotifySimpleDevelopmentPoint extends Command
         $hasMore = true;
 
         while ($hasMore) {
-            $backlogPayload = config('notion.payload.backlog');
+            $backlogPayload = config('notion.payload.backlog.progress');
             $backlogPayload['filter']['and'][0]['relation']['contains'] = $parentPageId;
 
             // ページネーション用のstart_cursorを設定

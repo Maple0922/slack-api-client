@@ -31,6 +31,8 @@ Route::get('/working_days', fn() =>
 Inertia::render('WorkingDays/Index'))->middleware(['auth', 'verified'])->name('working_days');
 Route::get('/notification', fn() =>
 Inertia::render('Notification/Index'))->middleware(['auth', 'verified'])->name('notification');
+Route::get('/dev_point', fn() =>
+Inertia::render('DevPoint/Index'))->middleware(['auth', 'verified'])->name('dev_point');
 
 
 

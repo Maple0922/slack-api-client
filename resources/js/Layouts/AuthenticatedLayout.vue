@@ -49,6 +49,12 @@ const showingNavigationDropdown = ref(false);
                                 >
                                     手動通知
                                 </NavLink>
+                                <NavLink
+                                    :href="route('dev_point')"
+                                    :active="route().current('dev_point')"
+                                >
+                                    開発ポイント
+                                </NavLink>
                             </div>
                         </div>
 

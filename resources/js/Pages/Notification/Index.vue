@@ -1,5 +1,5 @@
 <template>
-    <Head title="メンバー" />
+    <Head title="手動通知" />
     <AuthenticatedLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">

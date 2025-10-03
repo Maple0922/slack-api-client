@@ -1,9 +1,9 @@
 <template>
-    <Head title="稼働日数" />
+    <Head title="開発ポイント" />
     <AuthenticatedLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                稼働日数
+                開発ポイント
             </h2>
         </template>
         <template #default>

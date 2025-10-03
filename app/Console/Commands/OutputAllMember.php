@@ -27,13 +27,13 @@ class OutputAllMember extends Command
         $this->info('全メンバーのユーザー名とNotion ID:');
         $this->table(
             ['ユーザー名', 'Notion ID'],
-        $members
-        ->map(fn($member) => [
-            $member['name'],
-            $member['notion_id']
-        ])
-    );
-}
+            $members
+                ->map(fn($member) => [
+                    $member['name'],
+                    $member['notion_id']
+                ])
+        );
+    }
 
     private function getBacklogRecordDetails()
     {
@@ -64,7 +64,7 @@ class OutputAllMember extends Command
         $hasMore = true;
 
         while ($hasMore) {
-            $backlogPayload = config('notion.payload.backlog');
+            $backlogPayload = config('notion.payload.backlog.progress');
             $backlogPayload['filter']['and'][0]['relation']['contains'] = $parentPageId;
 
             // ページネーション用のstart_cursorを設定

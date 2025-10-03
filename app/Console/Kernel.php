@@ -36,6 +36,9 @@ class Kernel extends ConsoleKernel
         // 個人用
         $schedule->command(NotifySimpleDevelopmentPoint::class, ['--channel' => 'timesNakajima'])->weekdays()->dailyAt('9:00');
         $schedule->command(NotifySimpleReleaseSchedule::class, ['--channel' => 'timesNakajima'])->weekdays()->dailyAt('9:01');
+
+        // 開発ポイント集計
+        $schedule->command(AggregateDevelopPoint::class)->weeklyOn(3, '9:00');
     }
 
     /**
