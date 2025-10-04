@@ -1,21 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DevelopPointController;
 use App\Http\Controllers\MembersController;
 use App\Http\Controllers\WorkingDaysController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\TeamsController;
 use App\Http\Controllers\SlackChannelController;
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
 
 Route::middleware('api')->group(function () {
     Route::prefix('members')->group(function () {
@@ -38,6 +29,9 @@ Route::middleware('api')->group(function () {
     Route::prefix('notifications')->group(function () {
         Route::post('/', [NotificationController::class, 'send']);
         Route::get('/', [NotificationController::class, 'index']);
+    });
+    Route::prefix('develop_points')->group(function () {
+        Route::get('/', [DevelopPointController::class, 'index']);
     });
 });
 

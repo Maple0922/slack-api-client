@@ -32,7 +32,7 @@ Inertia::render('WorkingDays/Index'))->middleware(['auth', 'verified'])->name('w
 Route::get('/notification', fn() =>
 Inertia::render('Notification/Index'))->middleware(['auth', 'verified'])->name('notification');
 Route::get('/dev_point', fn() =>
-Inertia::render('DevPoint/Index'))->middleware(['auth', 'verified'])->name('dev_point');
+Inertia::render('DevelopPoint/Index'))->middleware(['auth', 'verified'])->name('develop_point');
 
 
 

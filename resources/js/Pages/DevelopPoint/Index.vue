@@ -18,18 +18,28 @@
                                             density="compact"
                                             variant="text"
                                             icon="mdi-chevron-left"
-                                            @click="() => shiftWorkingDays(-1)"
+                                            @click="() => shiftMonth(-6)"
                                         />
                                     </v-col>
                                     <v-col cols="auto">
-                                        <span class="text-lg">{{ month }}</span>
+                                        <span class="text-lg"
+                                            >{{
+                                                developPointHistory.dateRange
+                                                    .start
+                                            }}
+                                            ~
+                                            {{
+                                                developPointHistory.dateRange
+                                                    .end
+                                            }}</span
+                                        >
                                     </v-col>
                                     <v-col cols="auto">
                                         <v-btn
                                             density="compact"
                                             variant="text"
                                             icon="mdi-chevron-right"
-                                            @click="() => shiftWorkingDays(1)"
+                                            @click="() => shiftMonth(6)"
                                         />
                                     </v-col>
                                 </v-row>
@@ -58,19 +68,11 @@
                     </thead>
                     <tbody>
                         <tr
-                            v-for="workingDay in workingDays"
-                            :key="workingDay.date"
+                            v-for="developPoint in developPointHistory.points"
+                            :key="developPoint.inReviewDate"
                         >
-                            <td
-                                :class="
-                                    workingDay.isSaturday
-                                        ? 'text-blue-500'
-                                        : workingDay.isSunday
-                                          ? 'text-red-500'
-                                          : ''
-                                "
-                            >
-                                {{ workingDay.date }} ({{ workingDay.week }})
+                            <td>
+                                {{ developPoint.inReviewDate }}
                             </td>
                             <td
                                 v-for="member in validMembers"
@@ -79,41 +81,44 @@
                             >
                                 <template
                                     v-if="
-                                        workingDay.isSaturday ||
-                                        workingDay.isSunday
+                                        developMember(
+                                            member.notionId,
+                                            developPoint,
+                                        )
                                     "
-                                    >ー</template
                                 >
-                                <v-btn
-                                    v-else-if="
-                                        workingDay.members
-                                            .map((member) => member.id)
-                                            .includes(member.notionId)
-                                    "
-                                    density="compact"
-                                    icon="mdi-check"
-                                    variant="elevated"
-                                    color="primary"
-                                    @click="
-                                        deleteWorkingDay(
-                                            workingDay.date,
-                                            member.notionId,
-                                        )
-                                    "
-                                />
-                                <v-btn
-                                    v-else
-                                    density="compact"
-                                    icon="mdi-close"
-                                    variant="elevated"
-                                    color="error"
-                                    @click="
-                                        createWorkingDay(
-                                            workingDay.date,
-                                            member.notionId,
-                                        )
-                                    "
-                                />
+                                    <p>
+                                        {{
+                                            Math.round(
+                                                (developMember(
+                                                    member.notionId,
+                                                    developPoint,
+                                                )?.point /
+                                                    developMember(
+                                                        member.notionId,
+                                                        developPoint,
+                                                    )?.target) *
+                                                    100,
+                                            )
+                                        }}%
+                                    </p>
+                                    <p>
+                                        ({{
+                                            developMember(
+                                                member.notionId,
+                                                developPoint,
+                                            )?.point
+                                        }}
+                                        /
+                                        {{
+                                            developMember(
+                                                member.notionId,
+                                                developPoint,
+                                            )?.target
+                                        }})
+                                    </p>
+                                </template>
+                                <template v-else> - </template>
                             </td>
                         </tr>
                     </tbody>
@@ -126,27 +131,33 @@
 <script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, reactive } from "vue";
 import axios from "axios";
 
-import { WorkingDay } from "./types";
+import {
+    DevelopPoint,
+    DevelopPointMember,
+    DevelopPointHistory,
+    DevelopPointDateRange,
+} from "./types";
 import { Member } from "../Member/types";
 
-const month = ref(new Date().toISOString().slice(0, 7));
-const workingDays = ref<WorkingDay[]>([]);
 const members = ref<Member[]>([]);
 
-const monthOffset = ref(0);
+const developPointHistory = ref<DevelopPointHistory>({
+    dateRange: {
+        start: "",
+        end: "",
+    },
+    points: [],
+});
 
-const fetchWorkingDays = async (monthOffset: number) => {
-    const response = await axios.get(`/api/working_days/${monthOffset}`);
-    month.value = response.data.month;
-    workingDays.value = response.data.workingDays as WorkingDay[];
-};
+const fetchDevelopPointHistory = async (monthOffset: number) => {
+    const response = await axios.get(
+        `/api/develop_points?monthOffset=${monthOffset}`,
+    );
 
-const shiftWorkingDays = (offset: number) => {
-    monthOffset.value += offset;
-    fetchWorkingDays(monthOffset.value);
+    developPointHistory.value = response.data as DevelopPointHistory;
 };
 
 const fetchMembers = async () => {
@@ -154,22 +165,32 @@ const fetchMembers = async () => {
     members.value = response.data;
 };
 
+const dateRange = reactive<DevelopPointDateRange>({
+    start: "",
+    end: "",
+});
+
+const monthOffset = ref(0);
+
 const validMembers = computed(() =>
     members.value.filter((member) => member.isValid),
 );
 
-const createWorkingDay = async (date: string, memberId: string) => {
-    await axios.post("/api/working_days", { date, memberId });
-    await fetchWorkingDays(monthOffset.value);
+const shiftMonth = (offset: number) => {
+    monthOffset.value += offset;
+    fetchDevelopPointHistory(monthOffset.value);
 };
 
-const deleteWorkingDay = async (date: string, memberId: string) => {
-    await axios.delete(`/api/working_days/${date}/${memberId}`);
-    await fetchWorkingDays(monthOffset.value);
-};
+const developMember = (
+    notionId: string,
+    developPoint: DevelopPoint,
+): DevelopPointMember =>
+    developPoint.members.find(
+        (m) => m.notionId === notionId,
+    ) as DevelopPointMember;
 
 onMounted(() => {
-    fetchWorkingDays(monthOffset.value);
+    fetchDevelopPointHistory(monthOffset.value);
     fetchMembers();
 });
 </script>
