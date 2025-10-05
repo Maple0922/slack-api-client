@@ -13,7 +13,7 @@
                         <tr>
                             <th class="text-left">
                                 <v-row class="items-center">
-                                    <v-col cols="auto">
+                                    <v-col cols="auto" class="px-1">
                                         <v-btn
                                             density="compact"
                                             variant="text"
@@ -21,7 +21,7 @@
                                             @click="() => shiftMonth(-6)"
                                         />
                                     </v-col>
-                                    <v-col cols="auto">
+                                    <v-col cols="auto" class="px-1">
                                         <span class="text-lg"
                                             >{{
                                                 developPointHistory.dateRange
@@ -34,7 +34,7 @@
                                             }}</span
                                         >
                                     </v-col>
-                                    <v-col cols="auto">
+                                    <v-col cols="auto" class="px-1">
                                         <v-btn
                                             density="compact"
                                             variant="text"

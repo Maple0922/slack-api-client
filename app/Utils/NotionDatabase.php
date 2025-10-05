@@ -49,6 +49,7 @@ class NotionDatabase
 
             $allResults = $allResults->merge($response['results']);
             $hasMore = $response['has_more'] ?? false;
+            $startCursor = $response['next_cursor'] ?? null;
         }
 
         return $allResults;

@@ -92,7 +92,7 @@ class AggregateDevelopPoint extends Command
         Collection $backlogRecords
     ): void {
         $now = CarbonImmutable::now();
-        $developPoints = $backlogRecords
+        $backlogRecords
             ->groupBy('member.notion_id')
             ->map(function ($backlogRecords) use ($inReviewDate, $now) {
                 $member = $backlogRecords->first()['member'];
