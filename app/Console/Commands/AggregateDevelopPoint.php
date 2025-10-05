@@ -101,7 +101,7 @@ class AggregateDevelopPoint extends Command
                     ->reject(fn($day) => $offDates->contains(
                         $inReviewDate
                             ->subDays($day)
-                            ->format('Y/m/d')
+                            ->format('Y-m-d')
                     ))
                     ->count();
 

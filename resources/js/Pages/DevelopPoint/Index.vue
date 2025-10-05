@@ -124,7 +124,7 @@
                             <td
                                 v-for="member in validMembers"
                                 :key="member.notionId"
-                                class="text-center"
+                                class="text-center font-bold"
                             >
                                 <template
                                     v-if="
@@ -148,8 +148,8 @@
                                                             totalPoint.notionId ===
                                                             member.notionId,
                                                     )?.totalTarget || 1)) *
-                                                    100,
-                                            )
+                                                    1000,
+                                            ) / 10
                                         }}%
                                     </p>
                                     <p class="text-xs">
