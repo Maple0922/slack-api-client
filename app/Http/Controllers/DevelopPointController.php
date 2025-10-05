@@ -17,10 +17,11 @@ class DevelopPointController extends Controller
         $monthOffset = (int)$request->monthOffset ?? 0;
         $dateRange = $this->calcQuarterDateRange($monthOffset);
 
-        $developPoints = $this->developPoint
+        $developPointRecords = $this->developPoint
             ->with('member.team')
             ->whereBetween('in_review_date', $dateRange)
-            ->get()
+            ->get();
+        $developPoints = $developPointRecords
             ->groupBy('in_review_date')
             ->map(fn($developPoints) => [
                 'inReviewDate' => $developPoints->first()->in_review_date->format('Y-m-d'),
@@ -39,12 +40,27 @@ class DevelopPointController extends Controller
             ])
             ->values();
 
+        // メンバーごとに合計ポイントを算出
+        $totalPoints = $developPointRecords
+            ->groupBy('member_notion_id')
+            ->map(fn($developPoint) => [
+                'notionId' => $developPoint->first()->member_notion_id,
+                'totalPoint' => $developPoint->sum('point'),
+                'totalTarget' => $developPoint->sum('target'),
+            ])
+            ->values();
+
+
         return [
             'dateRange' => [
                 'start' => $dateRange[0]->format('Y/m/d'),
                 'end' => $dateRange[1]->format('Y/m/d'),
             ],
+            'updatedAt' => $developPointRecords->isNotEmpty()
+                ? $developPointRecords->max('updated_at')->format('Y/m/d H:i:s')
+                : null,
             'points' => $developPoints,
+            'totalPoints' => $totalPoints,
         ];
     }
 

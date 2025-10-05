@@ -87,7 +87,7 @@
                                         )
                                     "
                                 >
-                                    <p>
+                                    <p class="text-xl">
                                         {{
                                             Math.round(
                                                 (developMember(
@@ -102,19 +102,69 @@
                                             )
                                         }}%
                                     </p>
-                                    <p>
+                                    <p class="text-xs">
                                         ({{
                                             developMember(
                                                 member.notionId,
                                                 developPoint,
                                             )?.point
-                                        }}
-                                        /
-                                        {{
+                                        }}/{{
                                             developMember(
                                                 member.notionId,
                                                 developPoint,
                                             )?.target
+                                        }})
+                                    </p>
+                                </template>
+                                <template v-else> - </template>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-lg">Total</td>
+                            <td
+                                v-for="member in validMembers"
+                                :key="member.notionId"
+                                class="text-center"
+                            >
+                                <template
+                                    v-if="
+                                        developPointHistory.totalPoints.find(
+                                            (totalPoint) =>
+                                                totalPoint.notionId ===
+                                                member.notionId,
+                                        ) !== undefined
+                                    "
+                                >
+                                    <p class="text-xl">
+                                        {{
+                                            Math.round(
+                                                ((developPointHistory.totalPoints.find(
+                                                    (totalPoint) =>
+                                                        totalPoint.notionId ===
+                                                        member.notionId,
+                                                )?.totalPoint || 0) /
+                                                    (developPointHistory.totalPoints.find(
+                                                        (totalPoint) =>
+                                                            totalPoint.notionId ===
+                                                            member.notionId,
+                                                    )?.totalTarget || 1)) *
+                                                    100,
+                                            )
+                                        }}%
+                                    </p>
+                                    <p class="text-xs">
+                                        ({{
+                                            developPointHistory.totalPoints.find(
+                                                (totalPoint) =>
+                                                    totalPoint.notionId ===
+                                                    member.notionId,
+                                            )?.totalPoint
+                                        }}/{{
+                                            developPointHistory.totalPoints.find(
+                                                (totalPoint) =>
+                                                    totalPoint.notionId ===
+                                                    member.notionId,
+                                            )?.totalTarget
                                         }})
                                     </p>
                                 </template>
@@ -150,6 +200,7 @@ const developPointHistory = ref<DevelopPointHistory>({
         end: "",
     },
     points: [],
+    totalPoints: [],
 });
 
 const fetchDevelopPointHistory = async (monthOffset: number) => {
@@ -164,11 +215,6 @@ const fetchMembers = async () => {
     const response = await axios.get("/api/members");
     members.value = response.data;
 };
-
-const dateRange = reactive<DevelopPointDateRange>({
-    start: "",
-    end: "",
-});
 
 const monthOffset = ref(0);
 
