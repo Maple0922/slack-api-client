@@ -20,6 +20,7 @@ class DevelopPointController extends Controller
         $developPointRecords = $this->developPoint
             ->with('member.team')
             ->whereBetween('in_review_date', $dateRange)
+            ->orderBy('in_review_date')
             ->get();
         $developPoints = $developPointRecords
             ->groupBy('in_review_date')
