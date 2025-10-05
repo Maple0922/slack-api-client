@@ -8,7 +8,12 @@
         </template>
         <template #default>
             <v-sheet border rounded class="max-w-7xl mx-auto mt-8 mb-24">
-                <v-table density="compact" fixedHeader height="78vh">
+                <v-table
+                    density="compact"
+                    fixedHeader
+                    fixedFooter
+                    height="78vh"
+                >
                     <thead>
                         <tr>
                             <th class="text-left">
@@ -22,17 +27,23 @@
                                         />
                                     </v-col>
                                     <v-col cols="auto" class="px-1">
-                                        <span class="text-lg"
-                                            >{{
-                                                developPointHistory.dateRange
-                                                    .start
-                                            }}
-                                            ~
-                                            {{
-                                                developPointHistory.dateRange
-                                                    .end
-                                            }}</span
-                                        >
+                                        <v-tooltip location="top">
+                                            <template #activator="{ props }">
+                                                <span
+                                                    class="text-lg"
+                                                    v-bind="props"
+                                                    >{{ dateRange.start }}
+                                                    ~
+                                                    {{ dateRange.end }}</span
+                                                >
+                                            </template>
+                                            <template #default>
+                                                <span
+                                                    >Last updated:
+                                                    {{ updatedAt ?? "-" }}</span
+                                                >
+                                            </template>
+                                        </v-tooltip>
                                     </v-col>
                                     <v-col cols="auto" class="px-1">
                                         <v-btn
@@ -64,6 +75,9 @@
                                     </template>
                                 </v-tooltip>
                             </th>
+                            <th class="text-center">
+                                <span class="text-lg font-bold">Total</span>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -87,7 +101,7 @@
                                         )
                                     "
                                 >
-                                    <p class="text-xl">
+                                    <p class="text-lg">
                                         {{
                                             Math.round(
                                                 (developMember(
@@ -118,9 +132,35 @@
                                 </template>
                                 <template v-else> - </template>
                             </td>
+                            <td class="text-center font-bold">
+                                <p class="text-lg">
+                                    {{
+                                        Math.round(
+                                            (developInReviewDate(
+                                                developPoint.inReviewDate,
+                                            ).totalPoint /
+                                                developInReviewDate(
+                                                    developPoint.inReviewDate,
+                                                ).totalTarget) *
+                                                1000,
+                                        ) / 10
+                                    }}%
+                                </p>
+                                <p class="text-xs">
+                                    ({{
+                                        developInReviewDate(
+                                            developPoint.inReviewDate,
+                                        ).totalPoint
+                                    }}/{{
+                                        developInReviewDate(
+                                            developPoint.inReviewDate,
+                                        ).totalTarget
+                                    }})
+                                </p>
+                            </td>
                         </tr>
                         <tr>
-                            <td class="text-lg">Total</td>
+                            <td class="text-lg font-bold">Total</td>
                             <td
                                 v-for="member in validMembers"
                                 :key="member.notionId"
@@ -128,47 +168,51 @@
                             >
                                 <template
                                     v-if="
-                                        developPointHistory.totalPoints.find(
-                                            (totalPoint) =>
-                                                totalPoint.notionId ===
-                                                member.notionId,
-                                        ) !== undefined
+                                        developMemberTotalPoint(member.notionId)
                                     "
                                 >
-                                    <p class="text-xl">
+                                    <p class="text-lg">
                                         {{
                                             Math.round(
-                                                ((developPointHistory.totalPoints.find(
-                                                    (totalPoint) =>
-                                                        totalPoint.notionId ===
+                                                (developMemberTotalPoint(
+                                                    member.notionId,
+                                                ).totalPoint /
+                                                    developMemberTotalPoint(
                                                         member.notionId,
-                                                )?.totalPoint || 0) /
-                                                    (developPointHistory.totalPoints.find(
-                                                        (totalPoint) =>
-                                                            totalPoint.notionId ===
-                                                            member.notionId,
-                                                    )?.totalTarget || 1)) *
+                                                    ).totalTarget) *
                                                     1000,
                                             ) / 10
                                         }}%
                                     </p>
                                     <p class="text-xs">
                                         ({{
-                                            developPointHistory.totalPoints.find(
-                                                (totalPoint) =>
-                                                    totalPoint.notionId ===
-                                                    member.notionId,
-                                            )?.totalPoint
+                                            developMemberTotalPoint(
+                                                member.notionId,
+                                            ).totalPoint
                                         }}/{{
-                                            developPointHistory.totalPoints.find(
-                                                (totalPoint) =>
-                                                    totalPoint.notionId ===
-                                                    member.notionId,
-                                            )?.totalTarget
+                                            developMemberTotalPoint(
+                                                member.notionId,
+                                            ).totalTarget
                                         }})
                                     </p>
                                 </template>
                                 <template v-else> - </template>
+                            </td>
+                            <td class="text-center font-black">
+                                <p class="text-2xl">
+                                    {{
+                                        Math.round(
+                                            (totalPoint.totalPoint /
+                                                totalPoint.totalTarget) *
+                                                1000,
+                                        ) / 10 || 0
+                                    }}%
+                                </p>
+                                <p class="text-xs">
+                                    ({{ totalPoint.totalPoint }}/{{
+                                        totalPoint.totalTarget
+                                    }})
+                                </p>
                             </td>
                         </tr>
                     </tbody>
@@ -181,26 +225,33 @@
 <script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
-import { onMounted, ref, computed, reactive } from "vue";
+import { onMounted, ref, computed, toRefs, reactive } from "vue";
 import axios from "axios";
 
 import {
     DevelopPoint,
     DevelopPointMember,
     DevelopPointHistory,
-    DevelopPointDateRange,
+    MemberTotalPoint,
+    InReviewDateTotalPoint,
 } from "./types";
 import { Member } from "../Member/types";
 
 const members = ref<Member[]>([]);
 
-const developPointHistory = ref<DevelopPointHistory>({
+const developPointHistory = reactive<DevelopPointHistory>({
     dateRange: {
         start: "",
         end: "",
     },
     points: [],
-    totalPoints: [],
+    memberTotalPoints: [],
+    inReviewDateTotalPoints: [],
+    totalPoint: {
+        totalPoint: 0,
+        totalTarget: 0,
+    },
+    updatedAt: null,
 });
 
 const fetchDevelopPointHistory = async (monthOffset: number) => {
@@ -208,8 +259,16 @@ const fetchDevelopPointHistory = async (monthOffset: number) => {
         `/api/develop_points?monthOffset=${monthOffset}`,
     );
 
-    developPointHistory.value = response.data as DevelopPointHistory;
+    Object.assign(developPointHistory, response.data);
 };
+
+const {
+    dateRange,
+    memberTotalPoints,
+    inReviewDateTotalPoints,
+    totalPoint,
+    updatedAt,
+} = toRefs(developPointHistory);
 
 const fetchMembers = async () => {
     const response = await axios.get("/api/members");
@@ -234,6 +293,16 @@ const developMember = (
     developPoint.members.find(
         (m) => m.notionId === notionId,
     ) as DevelopPointMember;
+
+const developInReviewDate = (inReviewDate: string): InReviewDateTotalPoint =>
+    inReviewDateTotalPoints.value.find(
+        (totalPoint) => totalPoint.inReviewDate === inReviewDate,
+    ) as InReviewDateTotalPoint;
+
+const developMemberTotalPoint = (notionId: string): MemberTotalPoint =>
+    memberTotalPoints.value.find(
+        (totalPoint) => totalPoint.notionId === notionId,
+    ) as MemberTotalPoint;
 
 onMounted(() => {
     fetchDevelopPointHistory(monthOffset.value);

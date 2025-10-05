@@ -25,7 +25,7 @@ class DevelopPointController extends Controller
         $developPoints = $developPointRecords
             ->groupBy('in_review_date')
             ->map(fn($developPoints) => [
-                'inReviewDate' => $developPoints->first()->in_review_date->format('Y-m-d'),
+                'inReviewDate' => $developPoints->first()->in_review_date->format('Y/m/d'),
                 'members' => $developPoints->map(fn($developPoint) => [
                     'notionId' => $developPoint->member_notion_id,
                     'slackId' => $developPoint->member->slack_id,
@@ -42,7 +42,7 @@ class DevelopPointController extends Controller
             ->values();
 
         // メンバーごとに合計ポイントを算出
-        $totalPoints = $developPointRecords
+        $memberTotalPoints = $developPointRecords
             ->groupBy('member_notion_id')
             ->map(fn($developPoint) => [
                 'notionId' => $developPoint->first()->member_notion_id,
@@ -51,6 +51,19 @@ class DevelopPointController extends Controller
             ])
             ->values();
 
+        $inReviewDateTotalPoints = $developPointRecords
+            ->groupBy('in_review_date')
+            ->map(fn($developPoint) => [
+                'inReviewDate' => $developPoint->first()->in_review_date->format('Y/m/d'),
+                'totalPoint' => $developPoint->sum('point'),
+                'totalTarget' => $developPoint->sum('target'),
+            ])
+            ->values();
+
+        $totalPoint = [
+            'totalPoint' => $developPointRecords->sum('point'),
+            'totalTarget' => $developPointRecords->sum('target'),
+        ];
 
         return [
             'dateRange' => [
@@ -61,7 +74,9 @@ class DevelopPointController extends Controller
                 ? $developPointRecords->max('updated_at')->format('Y/m/d H:i:s')
                 : null,
             'points' => $developPoints,
-            'totalPoints' => $totalPoints,
+            'memberTotalPoints' => $memberTotalPoints,
+            'inReviewDateTotalPoints' => $inReviewDateTotalPoints,
+            'totalPoint' => $totalPoint,
         ];
     }
 
