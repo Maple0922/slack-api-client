@@ -204,8 +204,8 @@
                                         Math.round(
                                             (totalPoint.totalPoint /
                                                 totalPoint.totalTarget) *
-                                                1000,
-                                        ) / 10 || 0
+                                                10000,
+                                        ) / 100 || 0
                                     }}%
                                 </p>
                                 <p class="text-xs">
