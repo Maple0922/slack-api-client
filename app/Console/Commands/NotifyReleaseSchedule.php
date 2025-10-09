@@ -87,9 +87,8 @@ class NotifyReleaseSchedule extends Command
 
     private function getReleaseSchedulePayload()
     {
-        // リリース予定日 日付 1週間前から1週間後まで
-        $startDate = Carbon::now()->subDays(3)->format('Y-m-d');
-        $endDate = Carbon::now()->addDays(10)->format('Y-m-d');
+        $nowWithDiff = fn($diff) => Carbon::now()->addDays($diff)->format('Y-m-d');
+
         return [
             "filter" => [
                 "or" => [
@@ -98,13 +97,13 @@ class NotifyReleaseSchedule extends Command
                             [
                                 "property" => "リリース日",
                                 "date" => [
-                                    "on_or_after" => $startDate
+                                    "on_or_after" => $nowWithDiff(-1)
                                 ]
                             ],
                             [
                                 "property" => "リリース日",
                                 "date" => [
-                                    "on_or_before" => $endDate
+                                    "on_or_before" => $nowWithDiff(4)
                                 ]
                             ],
                             [
@@ -120,7 +119,7 @@ class NotifyReleaseSchedule extends Command
                             [
                                 "property" => "リリース日",
                                 "date" => [
-                                    "on_or_before" => $endDate
+                                    "on_or_before" => $nowWithDiff(4)
                                 ]
                             ],
                             [
