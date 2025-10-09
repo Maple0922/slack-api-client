@@ -18,7 +18,6 @@ export interface DevelopPointHistory {
     memberTotalPoints: MemberTotalPoint[];
     inReviewDateTotalPoints: InReviewDateTotalPoint[];
     totalPoint: TotalPoint;
-    updatedAt: string | null;
 }
 
 export interface DevelopPointDateRange {
@@ -29,6 +28,7 @@ export interface DevelopPointDateRange {
 export interface DevelopPoint {
     inReviewDate: string;
     members: DevelopPointMember[];
+    updatedAt: string;
 }
 
 export interface DevelopPointMember extends Omit<Member, "kpis" | "isValid"> {

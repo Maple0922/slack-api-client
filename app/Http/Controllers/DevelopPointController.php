@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Console\Commands\AggregateDevelopPoint;
 use App\Models\DevelopPoint;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 
 class DevelopPointController extends Controller
 {
@@ -38,6 +40,7 @@ class DevelopPointController extends Controller
                     'point' => $developPoint->point,
                     'target' => $developPoint->target,
                 ]),
+                'updatedAt' => $developPoints->max('updated_at')->format('Y/m/d H:i:s'),
             ])
             ->values();
 
@@ -70,9 +73,6 @@ class DevelopPointController extends Controller
                 'start' => $dateRange[0]->format('Y/m/d'),
                 'end' => $dateRange[1]->format('Y/m/d'),
             ],
-            'updatedAt' => $developPointRecords->isNotEmpty()
-                ? $developPointRecords->max('updated_at')->format('Y/m/d H:i:s')
-                : null,
             'points' => $developPoints,
             'memberTotalPoints' => $memberTotalPoints,
             'inReviewDateTotalPoints' => $inReviewDateTotalPoints,
@@ -114,5 +114,15 @@ class DevelopPointController extends Controller
                     ->setDay(31)
             ],
         };
+    }
+
+    public function refresh(Request $request)
+    {
+        Artisan::call(AggregateDevelopPoint::class, [
+            '--startDate' => $request->inReviewDate,
+            '--endDate' => $request->inReviewDate,
+        ]);
+
+        return response()->json(['message' => '開発ポイントを更新しました']);
     }
 }

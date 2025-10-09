@@ -9,6 +9,7 @@ use Carbon\CarbonImmutable;
 use Carbon\CarbonPeriodImmutable;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class AggregateDevelopPoint extends Command
 {
@@ -25,8 +26,12 @@ class AggregateDevelopPoint extends Command
 
     public function handle()
     {
-        $startDate = $this->option('startDate') ?? CarbonImmutable::today()->subMonth();
-        $endDate = $this->option('endDate') ?? CarbonImmutable::today();
+        $startDate = $this->option('startDate')
+            ? CarbonImmutable::parse($this->option('startDate'))
+            : CarbonImmutable::today()->subWeeks(2);
+        $endDate = $this->option('endDate')
+            ? CarbonImmutable::parse($this->option('endDate'))
+            : CarbonImmutable::today();
 
         $members = $this->member
             ->with('offDates')
@@ -43,15 +48,19 @@ class AggregateDevelopPoint extends Command
             ->filter(fn(CarbonImmutable $date) => $date->isTuesday())
             ->values();
 
-        $this->info(CarbonImmutable::now()->format('Y-m-d H:i:s') . '集計対象日: ' . $inReviewDates->map(fn(CarbonImmutable $date) => $date->format('Y/m/d'))->implode(', '));
+        $this->log("📊 集計対象日: ");
+        $inReviewDates->each(
+            fn(CarbonImmutable $date) =>
+            $this->log($date->format('🗓️ Y/m/d'))
+        );
 
         $inReviewDates
             ->each(function (CarbonImmutable $inReviewDate) use ($members) {
-                $this->info(CarbonImmutable::now()->format('Y-m-d H:i:s') . ": " . $inReviewDate->format('Y/m/d') . "のデータを取得します");
+                $this->log("🚀 {$inReviewDate->format('Y/m/d')} のデータを取得します");
                 $backlogRecords = $this->getBacklogRecords($inReviewDate, $members);
-                $this->info("{$backlogRecords->unique('member.notion_id')->count()}人 / {$backlogRecords->count()}件 / {$backlogRecords->sum('point')}ポイント");
-                $this->info(CarbonImmutable::now()->format('Y-m-d H:i:s') . ": " . $inReviewDate->format('Y/m/d') . "のデータを集計します");
+                $this->log("👥 {$backlogRecords->unique('member.notion_id')->count()}人 / {$backlogRecords->count()}件 / {$backlogRecords->sum('point')}ポイント");
                 $this->aggregateDevelopPoint($inReviewDate, $backlogRecords);
+                $this->log("✅ {$inReviewDate->format('Y/m/d')} のデータを集計しました");
             });
     }
 
@@ -121,5 +130,10 @@ class AggregateDevelopPoint extends Command
                 'member_notion_id' => $developPoint['member_notion_id'],
                 'in_review_date' => $developPoint['in_review_date']
             ], $developPoint));
+    }
+
+    private function log(string $message): void
+    {
+        $this->info(CarbonImmutable::now()->format('Y-m-d H:i:s') . ": {$message}");
     }
 }

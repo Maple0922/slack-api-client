@@ -32,6 +32,7 @@ Route::middleware('api')->group(function () {
     });
     Route::prefix('develop_points')->group(function () {
         Route::get('/', [DevelopPointController::class, 'index']);
+        Route::post('/refresh', [DevelopPointController::class, 'refresh']);
     });
 });
 

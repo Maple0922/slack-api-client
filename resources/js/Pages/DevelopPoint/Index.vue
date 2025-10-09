@@ -16,7 +16,7 @@
                 >
                     <thead>
                         <tr>
-                            <th class="text-left">
+                            <th class="text-left w-30">
                                 <v-row class="items-center">
                                     <v-col cols="auto" class="px-1">
                                         <v-btn
@@ -27,23 +27,11 @@
                                         />
                                     </v-col>
                                     <v-col cols="auto" class="px-1">
-                                        <v-tooltip location="top">
-                                            <template #activator="{ props }">
-                                                <span
-                                                    class="text-lg"
-                                                    v-bind="props"
-                                                    >{{ dateRange.start }}
-                                                    ~
-                                                    {{ dateRange.end }}</span
-                                                >
-                                            </template>
-                                            <template #default>
-                                                <span
-                                                    >Last updated:
-                                                    {{ updatedAt ?? "-" }}</span
-                                                >
-                                            </template>
-                                        </v-tooltip>
+                                        <span class="text-lg"
+                                            >{{ dateRange.start }}
+                                            ~
+                                            {{ dateRange.end }}</span
+                                        >
                                     </v-col>
                                     <v-col cols="auto" class="px-1">
                                         <v-btn
@@ -86,7 +74,44 @@
                             :key="developPoint.inReviewDate"
                         >
                             <td>
-                                {{ developPoint.inReviewDate }}
+                                <v-tooltip location="top">
+                                    <template #activator="{ props }">
+                                        <span
+                                            v-bind="props"
+                                            class="d-inline-block mr-2 w-20"
+                                            >{{
+                                                developPoint.inReviewDate
+                                            }}</span
+                                        >
+                                        <v-btn
+                                            v-bind="props"
+                                            :loading="
+                                                loadingInReviewDate ===
+                                                developPoint.inReviewDate
+                                            "
+                                            :disabled="
+                                                loadingInReviewDate ===
+                                                developPoint.inReviewDate
+                                            "
+                                            density="compact"
+                                            icon="mdi-refresh"
+                                            variant="text"
+                                            @click="
+                                                onClickRefresh(
+                                                    developPoint.inReviewDate,
+                                                )
+                                            "
+                                        />
+                                    </template>
+                                    <template #default>
+                                        <span
+                                            >Last updated:
+                                            {{
+                                                developPoint.updatedAt ?? "-"
+                                            }}</span
+                                        >
+                                    </template>
+                                </v-tooltip>
                             </td>
                             <td
                                 v-for="member in validMembers"
@@ -251,8 +276,9 @@ const developPointHistory = reactive<DevelopPointHistory>({
         totalPoint: 0,
         totalTarget: 0,
     },
-    updatedAt: null,
 });
+
+const loadingInReviewDate = ref<DevelopPoint["inReviewDate"] | null>(null);
 
 const fetchDevelopPointHistory = async (monthOffset: number) => {
     const response = await axios.get(
@@ -262,13 +288,16 @@ const fetchDevelopPointHistory = async (monthOffset: number) => {
     Object.assign(developPointHistory, response.data);
 };
 
-const {
-    dateRange,
-    memberTotalPoints,
-    inReviewDateTotalPoints,
-    totalPoint,
-    updatedAt,
-} = toRefs(developPointHistory);
+const refreshDevelopPoint = async (
+    inReviewDate: DevelopPoint["inReviewDate"],
+) => {
+    loadingInReviewDate.value = inReviewDate;
+    await axios.post(`/api/develop_points/refresh`, { inReviewDate });
+    loadingInReviewDate.value = null;
+};
+
+const { dateRange, memberTotalPoints, inReviewDateTotalPoints, totalPoint } =
+    toRefs(developPointHistory);
 
 const fetchMembers = async () => {
     const response = await axios.get("/api/members");
@@ -277,32 +306,41 @@ const fetchMembers = async () => {
 
 const monthOffset = ref(0);
 
-const validMembers = computed(() =>
+const validMembers = computed<Member[]>(() =>
     members.value.filter((member) => member.isValid),
 );
 
-const shiftMonth = (offset: number) => {
+const shiftMonth = (offset: number): void => {
     monthOffset.value += offset;
     fetchDevelopPointHistory(monthOffset.value);
 };
 
 const developMember = (
-    notionId: string,
+    notionId: DevelopPointMember["notionId"],
     developPoint: DevelopPoint,
 ): DevelopPointMember =>
     developPoint.members.find(
         (m) => m.notionId === notionId,
     ) as DevelopPointMember;
 
-const developInReviewDate = (inReviewDate: string): InReviewDateTotalPoint =>
+const developInReviewDate = (
+    inReviewDate: DevelopPoint["inReviewDate"],
+): InReviewDateTotalPoint =>
     inReviewDateTotalPoints.value.find(
         (totalPoint) => totalPoint.inReviewDate === inReviewDate,
     ) as InReviewDateTotalPoint;
 
-const developMemberTotalPoint = (notionId: string): MemberTotalPoint =>
+const developMemberTotalPoint = (
+    notionId: MemberTotalPoint["notionId"],
+): MemberTotalPoint =>
     memberTotalPoints.value.find(
         (totalPoint) => totalPoint.notionId === notionId,
     ) as MemberTotalPoint;
+
+const onClickRefresh = async (inReviewDate: DevelopPoint["inReviewDate"]) => {
+    await refreshDevelopPoint(inReviewDate);
+    fetchDevelopPointHistory(monthOffset.value);
+};
 
 onMounted(() => {
     fetchDevelopPointHistory(monthOffset.value);
