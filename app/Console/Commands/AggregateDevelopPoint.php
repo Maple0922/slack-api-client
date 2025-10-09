@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use App\Models\DevelopPoint;
 use App\Models\Member;
 use App\Utils\NotionDatabase;
-use App\Utils\SlackNotifier;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonPeriodImmutable;
 use Illuminate\Console\Command;

@@ -10,7 +10,7 @@ use App\Console\Commands\NotifyEngineerMtgOrder;
 use App\Console\Commands\NotifyReleaseSchedule;
 use App\Console\Commands\NotifySimpleReleaseSchedule;
 use App\Console\Commands\AggregateDevelopPoint;
-
+use App\Console\Commands\NotifyRoadmap;
 
 class Kernel extends ConsoleKernel
 {
@@ -31,8 +31,8 @@ class Kernel extends ConsoleKernel
         $schedule->command(NotifyDevelopPoint::class, ['--channel' => 'engineerDevPoint'])->weeklyOn(3, '8:30');
 
         // リリーススケジュール　(平日9:00, 火18:00)
-        $schedule->command(NotifyReleaseSchedule::class, ['--channel' => 'engineerRelease'])->weekdays()->dailyAt('9:00');
-        $schedule->command(NotifyReleaseSchedule::class, ['--channel' => 'engineerRelease'])->weeklyOn(2, '18:00');
+        $schedule->command(NotifyRoadmap::class, ['--channel' => 'engineerRelease'])->weekdays()->dailyAt('9:00');
+        $schedule->command(NotifyRoadmap::class, ['--channel' => 'engineerRelease'])->weeklyOn(2, '18:00');
 
         // 個人用
         $schedule->command(NotifySimpleDevelopmentPoint::class, ['--channel' => 'timesNakajima'])->weekdays()->dailyAt('9:00');

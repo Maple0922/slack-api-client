@@ -16,7 +16,7 @@ return [
     [
         'title' => 'ロードマップ進捗通知',
         'key' => 'engineerRoadmap',
-        'channel' => 'engineerRoadmap',
+        'channel' => 'engineerRelease',
         'class' => NotifyRoadmap::class,
     ],
     [

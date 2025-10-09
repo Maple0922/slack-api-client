@@ -30,20 +30,36 @@ defineProps({
                 <h1 class="text-5xl font-bold text-gray-400">
                     Engineer Console
                 </h1>
-                <div class="flex items-center">
-                    <a
-                        v-if="canLogin"
-                        :href="route('member')"
-                        class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 bg-white px-4 py-2 rounded-md"
-                        >メンバー</a
-                    >
+                <div class="flex items-center gap-4">
+                    <template v-if="canLogin">
+                        <a
+                            :href="route('member')"
+                            class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 bg-white px-4 py-2 rounded-md"
+                            >メンバー</a
+                        >
+                        <a
+                            :href="route('working_days')"
+                            class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 bg-white px-4 py-2 rounded-md"
+                            >稼働日数</a
+                        >
+                        <a
+                            :href="route('notification')"
+                            class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 bg-white px-4 py-2 rounded-md"
+                            >手動通知</a
+                        >
+                        <a
+                            :href="route('develop_point')"
+                            class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 bg-white px-4 py-2 rounded-md"
+                            >開発ポイント</a
+                        >
+                        >
+                    </template>
                     <template v-else>
                         <a
                             :href="route('login')"
                             class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 bg-white px-4 py-2 rounded-md"
                             >ログイン</a
                         >
-
                         <a
                             v-if="canRegister"
                             :href="route('register')"
