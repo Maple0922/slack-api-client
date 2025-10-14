@@ -60,11 +60,13 @@ class NotifyRoadmap extends Command
             ->sortBy('releaseDate')
             ->groupBy('releaseDate')
             ->map(function ($schedules, $releaseDate) {
-                $scheduleRows = $schedules->map(function ($s) {
-                    $prefixIcon = $this->getStatusIcon($s['status']);
-                    $name = $s['isDelayed'] ? "<@{$s['slackId']}>" : $s['name'];
-                    return "【{$prefixIcon} *{$s['status']}* 】 {$name} - {$s['delayMark']}<{$s['url']}|*{$s['title']}*>";
-                });
+                $scheduleRows = $schedules
+                    ->sortBy(fn($s) => $this->getStatusPriority($s['status']))
+                    ->map(function ($s) {
+                        $prefixIcon = $this->getStatusIcon($s['status']);
+                        $name = $s['isDelayed'] ? "<@{$s['slackId']}>" : $s['name'];
+                        return "【{$prefixIcon} *{$s['status']}* 】 {$name} - {$s['delayMark']}<{$s['url']}|*{$s['title']}*>";
+                    });
 
                 return collect([
                     ":spiral_calendar_pad: *{$releaseDate}*",
@@ -159,6 +161,17 @@ class NotifyRoadmap extends Command
             '開発中' => ":construction:",
             '開発スタンバイ' => ":construction:",
             default => ":question:",
+        };
+    }
+
+    private function getStatusPriority($status)
+    {
+        return match ($status) {
+            'リリース済' => 1,
+            'QA対応中' => 2,
+            '開発中' => 3,
+            '開発スタンバイ' => 4,
+            default => 5,
         };
     }
 }
