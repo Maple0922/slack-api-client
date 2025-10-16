@@ -56,7 +56,7 @@ class NotifySimpleReleaseSchedule extends Command
                         : $releaseDate->isoFormat('M/DD (ddd)'),
                     'userName' => $releaseDate->startOfDay()->isPast()
                         ? "*{$members->firstWhere('notion_id',$userId)->name}*"
-                        : $members->firstWhere('notion_id', $userId)->name ?? $userId,
+                        : $members->firstWhere('notion_id', $userId)->name ?? "Unknown",
                     'title' => $releaseDate->startOfDay()->isPast()
                         ? "*{$shortTitle}*"
                         : $shortTitle,
