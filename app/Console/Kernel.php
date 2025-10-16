@@ -25,12 +25,11 @@ class Kernel extends ConsoleKernel
         // エンジニア週次の順番 (水15:00)
         $schedule->command(NotifyEngineerMtgOrder::class, ['--channel' => 'engineerGeneral'])->weeklyOn(3, '15:00');
 
-        // 開発ポイント進捗 (金15:00, 火15:00, 水8:30)
-        $schedule->command(NotifyDevelopPoint::class, ['--channel' => 'engineerDevPoint'])->weeklyOn(5, '15:00');
-        $schedule->command(NotifyDevelopPoint::class, ['--channel' => 'engineerDevPoint'])->weeklyOn(2, '15:00');
-        $schedule->command(NotifyDevelopPoint::class, ['--channel' => 'engineerDevPoint'])->weeklyOn(3, '8:30');
+        // 開発ポイント進捗 (平日9:00, 21:00)
+        $schedule->command(NotifyDevelopPoint::class, ['--channel' => 'engineerDevPoint'])->weekdays()->dailyAt('9:00');
+        $schedule->command(NotifyDevelopPoint::class, ['--channel' => 'engineerDevPoint'])->weekdays()->dailyAt('21:00');
 
-        // リリーススケジュール　(平日9:00, 火18:00)
+        // ロードマップ進捗　(平日9:00, 火18:00)
         $schedule->command(NotifyRoadmap::class, ['--channel' => 'engineerRelease'])->weekdays()->dailyAt('9:00');
         $schedule->command(NotifyRoadmap::class, ['--channel' => 'engineerRelease'])->weeklyOn(2, '18:00');
 
