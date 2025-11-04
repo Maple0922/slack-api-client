@@ -1,0 +1,42 @@
+=🛠️ develop:
+  - base-branch: ['^develop$']
+
+🚧 staging:
+  - base-branch: ['^staging$']
+
+🔥 hotfix:
+  - base-branch: ['^master$']
+  - head-branch: ['^hotfix']
+
+🚀 release:
+  - base-branch: ['^master$']
+  - head-branch: ['^(?!hotfix)']
+
+📕 documentation:
+  - changed-files:
+    - any-glob-to-any-file:
+      - "**/*.md"
+
+⚙️ package-update:
+  - changed-files:
+    - any-glob-to-any-file:
+      - "**/package.json"
+      - "**/package-lock.json"
+      - "**/composer.json"
+      - "**/composer.lock"
+
+⚙️ need-refresh-container:
+  - changed-files:
+    - any-glob-to-any-file:
+      - "**/Dockerfile"
+      - "**/docker-compose*"
+
+⚙️ need-pull-kernel:
+- changed-files:
+    - any-glob-to-any-file:
+      - "src/app/Console/**/*.php"
+
+⚙️ test-code:
+- changed-files:
+    - any-glob-to-any-file:
+      - "src/tests/**/*"
