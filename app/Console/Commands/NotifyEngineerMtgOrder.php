@@ -26,7 +26,8 @@ class NotifyEngineerMtgOrder extends Command
             ->select('name')
             ->whereNotIn('name', [
                 'Kengo Kitaku',
-                'Issei Hayashi'
+                'Issei Hayashi',
+                'Ryo Numoto'
             ])
             ->get()
             ->shuffle()
