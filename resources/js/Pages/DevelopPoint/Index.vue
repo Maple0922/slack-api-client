@@ -123,7 +123,7 @@
                                         developMember(
                                             member.notionId,
                                             developPoint,
-                                        )
+                                        )?.target > 0
                                     "
                                 >
                                     <p class="text-lg">

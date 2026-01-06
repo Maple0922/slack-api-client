@@ -22,8 +22,10 @@ class DevelopPointController extends Controller
         $developPointRecords = $this->developPoint
             ->with('member.team')
             ->whereBetween('in_review_date', $dateRange)
+            ->where('target', '>', 0)
             ->orderBy('in_review_date')
             ->get();
+
         $developPoints = $developPointRecords
             ->groupBy('in_review_date')
             ->map(fn($developPoints) => [
@@ -47,25 +49,25 @@ class DevelopPointController extends Controller
         // メンバーごとに合計ポイントを算出
         $memberTotalPoints = $developPointRecords
             ->groupBy('member_notion_id')
-            ->map(fn($developPoint) => [
-                'notionId' => $developPoint->first()->member_notion_id,
-                'totalPoint' => $developPoint->sum('point'),
-                'totalTarget' => $developPoint->sum('target'),
+            ->map(fn($developPoints) => [
+                'notionId' => $developPoints->first()->member_notion_id,
+                'totalPoint' => $developPoints->sum('point'),
+                'totalTarget' => $developPoints->sum('target'),
             ])
             ->values();
 
         $inReviewDateTotalPoints = $developPointRecords
             ->groupBy('in_review_date')
-            ->map(fn($developPoint) => [
-                'inReviewDate' => $developPoint->first()->in_review_date->format('Y/m/d'),
-                'totalPoint' => $developPoint->sum('point'),
-                'totalTarget' => $developPoint->sum('target'),
+            ->map(fn($developPoints) => [
+                'inReviewDate' => $developPoints->first()->in_review_date->format('Y/m/d'),
+                'totalPoint' => $developPoints->sum('point'),
+                'totalTarget' => $developPoints->sum('target'),
             ])
             ->values();
 
         $totalPoint = [
-            'totalPoint' => $developPointRecords->sum('point'),
-            'totalTarget' => $developPointRecords->sum('target'),
+            'totalPoint' => $developPointRecords->filter(fn($developPoint) => $developPoint->target > 0)->sum('point'),
+            'totalTarget' => $developPointRecords->filter(fn($developPoint) => $developPoint->target > 0)->sum('target'),
         ];
 
         return [

@@ -124,12 +124,23 @@ class AggregateDevelopPoint extends Command
                     'updated_at' => $now,
                 ];
             })
-            ->each(fn($developPoint) =>
+            ->each(function ($developPoint) {
+                $existing = $this->developPoint->where([
+                    'member_notion_id' => $developPoint['member_notion_id'],
+                    'in_review_date' => $developPoint['in_review_date']
+                ])->first();
 
-            $this->developPoint->updateOrCreate([
-                'member_notion_id' => $developPoint['member_notion_id'],
-                'in_review_date' => $developPoint['in_review_date']
-            ], $developPoint));
+                if ($existing) {
+                    // レコードが存在する場合、targetを除いて更新
+                    $existing->update([
+                        'point' => $developPoint['point'],
+                        'updated_at' => $developPoint['updated_at'],
+                    ]);
+                } else {
+                    // レコードが存在しない場合、全てのフィールド（targetを含む）で作成
+                    $this->developPoint->create($developPoint);
+                }
+            });
     }
 
     private function log(string $message): void
