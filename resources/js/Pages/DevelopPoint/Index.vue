@@ -234,8 +234,13 @@
                                     }}%
                                 </p>
                                 <p class="text-xs">
-                                    ({{ totalPoint.totalPoint }}/{{
-                                        totalPoint.totalTarget
+                                    ({{
+                                        Math.round(totalPoint.totalPoint * 10) /
+                                        10
+                                    }}/{{
+                                        Math.round(
+                                            totalPoint.totalTarget * 10,
+                                        ) / 10
                                     }})
                                 </p>
                             </td>
