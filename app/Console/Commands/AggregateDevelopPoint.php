@@ -135,28 +135,21 @@ class AggregateDevelopPoint extends Command
                 ];
             })
             ->each(function ($developPoint) {
-                $this->developPoint->updateOrCreate(
-                    [
-                        'member_notion_id' => $developPoint['member_notion_id'],
-                        'in_review_date' => $developPoint['in_review_date']
-                    ],
-                    $developPoint
-                );
-                // $existing = $this->developPoint->where([
-                //     'member_notion_id' => $developPoint['member_notion_id'],
-                //     'in_review_date' => $developPoint['in_review_date']
-                // ])->first();
+                $existing = $this->developPoint->where([
+                    'member_notion_id' => $developPoint['member_notion_id'],
+                    'in_review_date' => $developPoint['in_review_date']
+                ])->first();
 
-                // if ($existing) {
-                //     // レコードが存在する場合、targetを除いて更新
-                //     $existing->update([
-                //         'point' => $developPoint['point'],
-                //         'updated_at' => $developPoint['updated_at'],
-                //     ]);
-                // } else {
-                //     // レコードが存在しない場合、全てのフィールド（targetを含む）で作成
-                //     $this->developPoint->create($developPoint);
-                // }
+                if ($existing) {
+                    // レコードが存在する場合、targetを除いて更新
+                    $existing->update([
+                        'point' => $developPoint['point'],
+                        'updated_at' => $developPoint['updated_at'],
+                    ]);
+                } else {
+                    // レコードが存在しない場合、全てのフィールド（targetを含む）で作成
+                    $this->developPoint->create($developPoint);
+                }
             });
 
         // backlogRecordsに含まれていないメンバーのdevelopPointを作成
