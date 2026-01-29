@@ -99,9 +99,9 @@ class NotifySimpleReleaseSchedule extends Command
     private function getReleaseSchedulePayload()
     {
         $nextBusinessDay = (
-            Carbon::today()->isFriday()
-            ? Carbon::today()->addDays(3)
-            : Carbon::today()->addDays(1)
+            CarbonImmutable::today()->isFriday()
+            ? CarbonImmutable::today()->addDays(3)
+            : CarbonImmutable::today()->addDays(1)
         )->format('Y-m-d');
 
         return [
