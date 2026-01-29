@@ -98,34 +98,33 @@ class NotifySimpleReleaseSchedule extends Command
 
     private function getReleaseSchedulePayload()
     {
-        // リリース予定日 日付 1週間前から1週間後まで
-        $startDate = CarbonImmutable::now()->subDays(10)->startOfDay()->format('Y-m-d');
-        $endDate = CarbonImmutable::now()->addDays(3)->endOfDay()->format('Y-m-d');
+        $nextBusinessDay = (
+            Carbon::today()->isFriday()
+            ? Carbon::today()->addDays(3)
+            : Carbon::today()->addDays(1)
+        )->format('Y-m-d');
+
         return [
             "filter" => [
-                "and" => [
-                    [
-                        "property" => "リリース日",
-                        "date" => [
-                            "on_or_after" => $startDate
-                        ]
-                    ],
-                    [
-                        "property" => "リリース日",
-                        "date" => [
-                            "on_or_before" => $endDate
-                        ]
-                    ],
-                    [
-                        "property" => "Product",
-                        "select" => [
-                            "does_not_equal" => "セキュリティ"
-                        ]
-                    ],
-                    [
-                        "property" => "Status",
-                        "select" => [
-                            "does_not_equal" => "リリース済"
+                [
+                    "and" => [
+                        [
+                            "property" => "リリース日",
+                            "date" => [
+                                "on_or_before" => $nextBusinessDay
+                            ]
+                        ],
+                        [
+                            "property" => "Status",
+                            "select" => [
+                                "does_not_equal" => "リリース済"
+                            ]
+                        ],
+                        [
+                            "property" => "Product",
+                            "select" => [
+                                "does_not_equal" => "セキュリティ"
+                            ]
                         ]
                     ],
                 ],

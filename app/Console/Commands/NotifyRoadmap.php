@@ -99,54 +99,34 @@ class NotifyRoadmap extends Command
 
     private function getRoadmapPayload()
     {
-        $nowWithDiff = fn($diff) => Carbon::now()->addDays($diff)->format('Y-m-d');
+        $nextBusinessDay = (
+            Carbon::today()->isFriday()
+            ? Carbon::today()->addDays(3)
+            : Carbon::today()->addDays(1)
+        )->format('Y-m-d');
 
         return [
             "filter" => [
-                "or" => [
-                    [
-                        "and" => [
-                            [
-                                "property" => "リリース日",
-                                "date" => [
-                                    "on_or_after" => $nowWithDiff(-1)
-                                ]
-                            ],
-                            [
-                                "property" => "リリース日",
-                                "date" => [
-                                    "on_or_before" => $nowWithDiff(4)
-                                ]
-                            ],
-                            [
-                                "property" => "Product",
-                                "select" => [
-                                    "does_not_equal" => "セキュリティ"
-                                ]
+                [
+                    "and" => [
+                        [
+                            "property" => "リリース日",
+                            "date" => [
+                                "on_or_before" => $nextBusinessDay
                             ]
                         ],
-                    ],
-                    [
-                        "and" => [
-                            [
-                                "property" => "リリース日",
-                                "date" => [
-                                    "on_or_before" => $nowWithDiff(4)
-                                ]
-                            ],
-                            [
-                                "property" => "Status",
-                                "select" => [
-                                    "does_not_equal" => "リリース済"
-                                ]
-                            ],
-                            [
-                                "property" => "Product",
-                                "select" => [
-                                    "does_not_equal" => "セキュリティ"
-                                ]
+                        [
+                            "property" => "Status",
+                            "select" => [
+                                "does_not_equal" => "リリース済"
                             ]
                         ],
+                        [
+                            "property" => "Product",
+                            "select" => [
+                                "does_not_equal" => "セキュリティ"
+                            ]
+                        ]
                     ],
                 ],
             ],
