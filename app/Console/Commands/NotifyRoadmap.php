@@ -107,27 +107,25 @@ class NotifyRoadmap extends Command
 
         return [
             "filter" => [
-                [
-                    "and" => [
-                        [
-                            "property" => "リリース日",
-                            "date" => [
-                                "on_or_before" => $nextBusinessDay
-                            ]
-                        ],
-                        [
-                            "property" => "Status",
-                            "select" => [
-                                "does_not_equal" => "リリース済"
-                            ]
-                        ],
-                        [
-                            "property" => "Product",
-                            "select" => [
-                                "does_not_equal" => "セキュリティ"
-                            ]
+                "and" => [
+                    [
+                        "property" => "リリース日",
+                        "date" => [
+                            "on_or_before" => $nextBusinessDay
                         ]
                     ],
+                    [
+                        "property" => "Status",
+                        "select" => [
+                            "does_not_equal" => "リリース済"
+                        ]
+                    ],
+                    [
+                        "property" => "Product",
+                        "select" => [
+                            "does_not_equal" => "セキュリティ"
+                        ]
+                    ]
                 ],
             ],
         ];
